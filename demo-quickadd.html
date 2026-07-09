@@ -1,0 +1,489 @@
+<!-- © 2026 91Pixels. All Rights Reserved. Internal dependency of social-demo.html — not linked from the client review page. -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="copyright" content="© 2026 91Pixels. All Rights Reserved.">
+<meta name="author" content="91Pixels">
+<meta name="robots" content="noindex, nofollow">
+<title>Beat · Rep App — Wireframe v4 (Full-Page Quick Add)</title>
+<style>
+  /* ============================================================
+     BEAT — Field Sales Rep App · Clickable Wireframe v4
+     Builds on v3's hero-card catalog. The only thing redesigned
+     here (per Bala) is the interaction for adding a product:
+     instead of a small bottom sheet, container + quantity + order
+     summary now live as sections on ONE full-page scroll, and
+     picking an option in a section auto-scrolls you into the next
+     one. Quantity adds quick-select chips (5/10/20/25 + Custom
+     numeric entry), each chip showing its own bulk-discount tag.
+     ============================================================ */
+
+  :root{
+    --ink:#1c1f24; --ink-2:#565b64; --ink-3:#8a8f98;
+    --line:#e3e5e9; --line-2:#d3d6db;
+    --fill:#f4f5f7; --fill-2:#eceef1; --fill-3:#e0e3e8;
+    --paper:#ffffff; --primary:#23262c; --primary-ink:#ffffff;
+    --stage:#dde0e5; --save:#1c1f24;
+    --radius:14px;
+    --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:var(--font);
+    background:radial-gradient(1200px 600px at 50% -10%, #eef0f3 0%, var(--stage) 60%);
+    color:var(--ink); -webkit-font-smoothing:antialiased; min-height:100vh;
+  }
+
+  .caption{ display:flex; align-items:center; gap:16px; padding:14px 22px;
+    border-bottom:1px solid var(--line); background:rgba(255,255,255,.7);
+    backdrop-filter:blur(6px); position:sticky; top:0; z-index:40; flex-wrap:wrap; }
+  .caption .brand{ display:flex; align-items:center; gap:10px; }
+  .caption .dot{ width:10px; height:10px; border-radius:50%; background:var(--primary); }
+  .caption h1{ font-size:14px; margin:0; letter-spacing:.02em; font-weight:650; }
+  .caption .tag{ font-size:11px; color:var(--ink-2); border:1px solid var(--line-2);
+    padding:2px 8px; border-radius:20px; background:var(--paper); }
+  .caption .spacer{ flex:1; }
+
+  .workspace{ display:flex; justify-content:center; padding:34px 22px 60px; }
+  .phone-wrap{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .phone{ width:380px; height:800px; background:var(--paper); border:9px solid #2a2d33;
+    border-radius:42px; box-shadow:0 30px 60px -20px rgba(20,22,28,.45), 0 8px 20px -8px rgba(20,22,28,.25);
+    position:relative; overflow:hidden; display:flex; flex-direction:column; }
+  .notch{ position:absolute; top:0; left:50%; transform:translateX(-50%); width:150px; height:26px;
+    background:#2a2d33; border-bottom-left-radius:14px; border-bottom-right-radius:14px; z-index:30; }
+  .statusbar{ height:34px; flex-shrink:0; display:flex; align-items:center; justify-content:space-between;
+    padding:0 22px; font-size:11px; color:var(--ink-2); font-weight:600; }
+  .statusbar .r{ display:flex; gap:5px; align-items:center; }
+  .screenport{ flex:1; position:relative; overflow:hidden; }
+
+  /* ===== HERO FEED (reels-style vertical snap) ===== */
+  .feed{ position:absolute; inset:0; overflow-y:scroll; scroll-snap-type:y mandatory;
+    -webkit-overflow-scrolling:touch; }
+  .feed::-webkit-scrollbar{ width:0; }
+  .herocard{ width:100%; height:100%; scroll-snap-align:start; display:flex; flex-direction:column;
+    position:relative; background:var(--paper); }
+
+  .hc-media{ height:46%; flex-shrink:0; background:linear-gradient(160deg,var(--fill-3),var(--fill-2));
+    display:flex; align-items:center; justify-content:center; font-size:64px; color:#c4c8ce; position:relative; }
+  .hc-progress{ position:absolute; top:14px; left:16px; font-size:11px; font-weight:700; color:var(--ink);
+    background:rgba(255,255,255,.85); border:1px solid var(--line-2); padding:4px 10px; border-radius:20px; }
+  .hc-scope{ position:absolute; top:14px; right:16px; font-size:9.5px; font-weight:700; letter-spacing:.03em;
+    padding:4px 9px; border-radius:20px; background:rgba(255,255,255,.9); border:1px solid var(--line-2); color:var(--ink-2); }
+  .hc-swipehint{ position:absolute; right:14px; bottom:10px; display:flex; flex-direction:column; align-items:center;
+    gap:2px; color:rgba(28,31,36,.4); font-size:10px; font-weight:700; }
+
+  .hc-body{ flex:1; padding:18px 18px 0; display:flex; flex-direction:column; min-height:0; }
+  .hc-brand{ font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); font-weight:700; }
+  .hc-name{ font-size:21px; font-weight:750; line-height:1.18; margin:5px 0 7px; }
+  .hc-tagline{ font-size:12.5px; color:var(--ink-2); line-height:1.5; }
+  .hc-priceline{ display:flex; align-items:baseline; gap:8px; margin-top:14px; }
+  .hc-priceline .now{ font-size:19px; font-weight:800; }
+  .hc-priceline .per{ font-size:11px; color:var(--ink-3); font-weight:600; }
+  .hc-packs{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .hc-packchip{ font-size:10.5px; font-weight:600; color:var(--ink-2); border:1px solid var(--line-2);
+    background:var(--fill); padding:4px 9px; border-radius:20px; }
+
+  .hc-actions{ flex-shrink:0; display:flex; gap:10px; padding:16px 18px 20px; }
+  .hc-actions .btn{ flex:1; }
+
+  .btn{ height:48px; border-radius:12px; border:none; width:100%; background:var(--primary); color:#fff;
+    font:inherit; font-weight:650; font-size:14px; cursor:pointer; display:flex; align-items:center;
+    justify-content:center; gap:8px; }
+  .btn:hover{ opacity:.92; }
+  .btn.ghost{ background:var(--paper); color:var(--ink); border:1px solid var(--line-2); }
+  .btn.ghost:hover{ background:var(--fill); opacity:1; }
+  .btn[disabled]{ opacity:.4; cursor:not-allowed; }
+
+  /* ===== SCRIM ===== */
+  .scrim{ position:absolute; top:34px; left:0; right:0; bottom:0; background:rgba(20,22,28,.42); opacity:0; visibility:hidden;
+    transition:opacity .2s; z-index:25; }
+  .scrim.open{ opacity:1; visibility:visible; }
+
+  /* ===== FULL-PAGE PRODUCT FLOW =====
+     Anchored to .phone (fixed, non-scrolling) with top+bottom both
+     set (no height/max-height math needed) — a lesson learned from
+     v3, where a percentage max-height on a sheet nested near the
+     scrolling feed caused real overflow glitches. Slides in from
+     the right like a drill-down, not up like a small sheet, since
+     this is meant to read as "a whole page," not a modal. */
+  .pf-screen{ position:absolute; top:34px; left:0; right:0; bottom:0; background:var(--paper); z-index:26;
+    transform:translateX(100%); visibility:hidden; pointer-events:none;
+    transition:transform .28s ease, visibility 0s linear .28s;
+    display:flex; flex-direction:column; overflow:hidden; }
+  .pf-screen.open{ transform:none; visibility:visible; pointer-events:auto; transition:transform .28s ease, visibility 0s linear 0s; }
+  .pf-head{ display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); flex-shrink:0; background:var(--paper); }
+  .pf-head .back{ width:30px; height:30px; border-radius:8px; border:1px solid var(--line-2); background:var(--paper);
+    cursor:pointer; font-size:16px; color:var(--ink); flex-shrink:0; }
+  .pf-head .back:hover{ background:var(--fill); }
+  .pf-head .htitle{ font-size:14px; font-weight:650; }
+  .pf-head .hsub{ font-size:11px; color:var(--ink-3); margin-top:1px; }
+
+  .pf-scroll{ flex:1; min-height:0; overflow-y:auto; scroll-behavior:smooth; }
+  .pf-scroll::-webkit-scrollbar{ width:0; }
+
+  .pf-block{ padding:22px 18px; border-bottom:8px solid var(--fill); scroll-margin-top:8px; }
+  .pf-block:last-child{ border-bottom:none; }
+
+  .pf-steplabel{ font-size:11px; font-weight:700; color:var(--ink-2); text-transform:uppercase;
+    letter-spacing:.06em; margin-bottom:13px; display:flex; align-items:center; gap:8px; }
+  .pf-steplabel .stepdot{ width:18px; height:18px; border-radius:50%; background:var(--primary); color:#fff;
+    font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  .pd-hero{ height:120px; border-radius:12px; background:linear-gradient(160deg,var(--fill-3),var(--fill-2));
+    display:flex; align-items:center; justify-content:center; font-size:40px; color:#c4c8ce; margin-bottom:14px; }
+  .pd-desc{ font-size:12.5px; color:var(--ink-2); line-height:1.6; }
+
+  /* containers */
+  .containers{ display:flex; flex-direction:column; gap:9px; }
+  .container-opt{ border:1.5px solid var(--line-2); border-radius:12px; padding:11px 13px; display:flex;
+    align-items:center; gap:12px; cursor:pointer; background:var(--paper); }
+  .container-opt:hover{ border-color:var(--ink-3); }
+  .container-opt.sel{ border-color:var(--primary); background:#f7f7f8; box-shadow:inset 0 0 0 1px var(--primary); }
+  .container-opt .cico{ font-size:20px; width:34px; text-align:center; flex-shrink:0; }
+  .container-opt .ctext{ flex:1; }
+  .container-opt .ck{ font-size:13px; font-weight:700; }
+  .container-opt .cu{ font-size:10.5px; color:var(--ink-3); margin-top:1px; }
+  .container-opt .cprice{ font-size:12.5px; font-weight:700; text-align:right; }
+  .container-opt .crate{ font-size:9.5px; color:var(--ink-3); text-align:right; margin-top:1px; }
+  .container-opt .cradio{ width:18px; height:18px; border-radius:50%; border:1.5px solid var(--line-2); flex-shrink:0; }
+  .container-opt.sel .cradio{ border-color:var(--primary); background:var(--primary); box-shadow:inset 0 0 0 3px var(--paper); }
+
+  /* quantity chips */
+  .qtychips{ display:flex; flex-wrap:wrap; gap:9px; }
+  .qchip{ display:flex; align-items:baseline; gap:6px; border:1.5px solid var(--line-2); border-radius:12px;
+    padding:10px 13px; background:var(--paper); cursor:pointer; font:inherit; color:var(--ink); }
+  .qchip:hover{ border-color:var(--ink-3); }
+  .qchip .qn{ font-size:15px; font-weight:800; }
+  .qchip .qu{ font-size:10.5px; color:var(--ink-3); font-weight:600; }
+  .qchip .qtag{ font-size:9.5px; font-weight:800; background:var(--save); color:#fff; padding:2px 6px; border-radius:6px; margin-left:2px; }
+  .qchip.sel{ border-color:var(--primary); background:#f7f7f8; box-shadow:inset 0 0 0 1px var(--primary); }
+  .qchip.custom{ border-style:dashed; }
+
+  .qcustom-row{ display:none; margin-top:12px; gap:8px; align-items:center; }
+  .qcustom-row.show{ display:flex; }
+  .qcustom-row input{ flex:1; height:46px; border:1.5px solid var(--line-2); border-radius:11px; padding:0 14px;
+    font:inherit; font-size:15px; font-weight:700; color:var(--ink); background:var(--paper); }
+  .qcustom-row input:focus{ outline:none; border-color:var(--primary); }
+  .qcustom-row button{ height:46px; padding:0 18px; border-radius:11px; border:none; background:var(--primary); color:#fff;
+    font:inherit; font-weight:650; font-size:13px; cursor:pointer; flex-shrink:0; }
+
+  /* order summary */
+  .pf-totalrow{ display:flex; align-items:center; justify-content:space-between; }
+  .pf-totalrow .k{ font-size:9.5px; color:var(--ink-3); text-transform:uppercase; letter-spacing:.05em; font-weight:650; display:block; }
+  .pf-totalrow .sl{ display:flex; align-items:baseline; gap:8px; margin-top:2px; }
+  .pf-totalrow .was{ font-size:12px; color:var(--ink-3); text-decoration:line-through; }
+  .pf-totalrow .now{ font-size:22px; font-weight:800; letter-spacing:-.01em; }
+  .pf-totalrow .save{ font-size:10.5px; font-weight:800; background:var(--save); color:#fff; padding:3px 8px; border-radius:7px; }
+  .pf-rate{ font-size:11.5px; color:var(--ink-2); line-height:1.5; background:var(--fill); border-radius:9px;
+    padding:9px 11px; margin-top:12px; }
+
+  .toast{ position:absolute; left:50%; bottom:26px; transform:translate(-50%,20px); background:var(--primary); color:#fff;
+    font-size:12.5px; font-weight:600; padding:11px 16px; border-radius:11px; opacity:0; pointer-events:none; z-index:40;
+    transition:opacity .25s, transform .25s; display:flex; align-items:center; gap:9px; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis;
+    box-shadow:0 10px 24px -10px rgba(0,0,0,.5); max-width:88%; }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+
+  .phone-hint{ font-size:11px; color:var(--ink-3); text-align:center; max-width:320px; line-height:1.5; }
+</style>
+</head>
+<body>
+
+  <div class="caption">
+    <div class="brand"><span class="dot"></span><h1>Beat · Field Rep App</h1></div>
+    <span class="tag">Wireframe v4</span>
+    <span class="tag">Full-page quick add · auto-scroll</span>
+    <div class="spacer"></div>
+    <span class="tag">🇿🇦 South Africa · ₹</span>
+    <span class="tag">© 91Pixels · All rights reserved</span>
+  </div>
+
+  <div class="workspace">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="statusbar"><span>9:41</span><span class="r">▮▮▮ &nbsp; 📶 &nbsp; 🔋</span></div>
+        <div class="screenport">
+          <div class="feed" id="feed"></div>
+          <div class="toast" id="toast">✓ Added to order</div>
+        </div>
+
+        <!-- FULL-PAGE PRODUCT FLOW: details → containers → quantity → summary,
+             all one scrollable page; picking an option auto-scrolls to the next block. -->
+        <div class="scrim" id="pfScrim"></div>
+        <div class="pf-screen" id="pfScreen">
+          <div class="pf-head">
+            <button class="back" id="pfBack">‹</button>
+            <div><div class="htitle" id="pfTitle">Product</div><div class="hsub" id="pfSub">—</div></div>
+          </div>
+          <div class="pf-scroll" id="pfScroll">
+
+            <section class="pf-block" id="blockDetails">
+              <div class="pd-hero" id="pfHero">📦</div>
+              <div class="hc-brand" id="pfBrand">—</div>
+              <div class="hc-name" style="font-size:18px;margin:4px 0 8px" id="pfName">—</div>
+              <p class="pd-desc" id="pfDesc">—</p>
+            </section>
+
+            <section class="pf-block" id="blockContainers">
+              <div class="pf-steplabel"><span class="stepdot">1</span>Choose container</div>
+              <div class="containers" id="pfContainers"></div>
+            </section>
+
+            <section class="pf-block" id="blockQuantity" style="display:none">
+              <div class="pf-steplabel"><span class="stepdot">2</span><span id="pfQtyLabel">Quantity</span></div>
+              <div class="qtychips" id="pfChips"></div>
+              <div class="qcustom-row" id="pfCustomRow">
+                <input type="text" inputmode="numeric" pattern="[0-9]*" id="pfCustomInput" placeholder="Enter quantity" />
+                <button id="pfCustomApply">Use</button>
+              </div>
+            </section>
+
+            <section class="pf-block" id="blockSummary" style="display:none">
+              <div class="pf-steplabel"><span class="stepdot">3</span>Order summary</div>
+              <div class="pf-totalrow">
+                <div>
+                  <span class="k">Total</span>
+                  <div class="sl"><span class="was" id="pfWas"></span><span class="now" id="pfNow">₹0</span><span class="save" id="pfSave" style="display:none"></span></div>
+                </div>
+              </div>
+              <div class="pf-rate" id="pfRate">—</div>
+              <div style="height:16px"></div>
+              <button class="btn" id="pfConfirm">Add to order</button>
+            </section>
+
+          </div>
+        </div>
+      </div>
+      <p class="phone-hint">Swipe up/down through one product at a time. Tap a card to open it — choosing a container auto-scrolls you to quantity, choosing a quantity auto-scrolls you to the order summary.</p>
+    </div>
+  </div>
+
+<script>
+const CFG = { ccy:"₹" };
+
+/* container types every product is sold in, with units-per-container. */
+const CONTAINERS = [
+  { k:"Box",    icon:"📦", u:6 },
+  { k:"Carton", icon:"🧱", u:24 },
+  { k:"Pallet", icon:"🚛", u:1152 },
+];
+
+/* quick-select quantity chips shown after a container is chosen */
+const QTY_PRESETS = [5, 10, 20, 25];
+
+/* bulk discount ladder — applies to the quantity of whichever container is chosen */
+const TIERS = [
+  { min:1,  max:4,  off:0.00, label:"1 – 4" },
+  { min:5,  max:9,  off:0.05, label:"5 – 9" },
+  { min:10, max:19, off:0.10, label:"10 – 19" },
+  { min:20, max:Infinity, off:0.15, label:"20+" },
+];
+
+const PRODUCTS = [
+  { id:"p1", brand:"Bytes", name:"Basmati Rice 5 kg", icon:"🍚", scope:"National", unit:420,
+    tagline:"Long-grain, aged basmati — the store's steadiest re-order.",
+    desc:"Aged for extra length and aroma, this 5 kg pack is the top re-order across every store on the beat. Consistent grain quality means fewer complaints and repeat buys." },
+  { id:"p2", brand:"Bytes", name:"Sunflower Oil 1 L", icon:"🛢️", scope:"Provincial", unit:180,
+    tagline:"Light, neutral-tasting cooking oil in the 1 L format shoppers grab most.",
+    desc:"Cold-pressed sunflower oil, refined for a neutral taste that works across frying and everyday cooking. The 1 L bottle is the single fastest-moving SKU in this category." },
+  { id:"p3", brand:"Bytes", name:"Spaghetti 500 g", icon:"🍝", scope:"National", unit:65,
+    tagline:"Durum wheat spaghetti — a pantry staple that never sits on shelf long.",
+    desc:"Bronze-cut durum wheat spaghetti that holds sauce well. Priced to move fast with retailers who stock dry pasta as a weekly staple." },
+  { id:"p4", brand:"Bytes", name:"Dishwash Bar 300 g", icon:"🧼", scope:"Local", unit:35,
+    tagline:"The counter-side dishwash bar every kitchen keeps two of.",
+    desc:"A hard-wearing dishwash bar that cuts grease fast and lasts through heavy daily use — a low-price, high-frequency add for any general dealer." },
+  { id:"p5", brand:"Bytes", name:"Laundry Powder 2 kg", icon:"🧺", scope:"National", unit:210,
+    tagline:"Everyday laundry powder, priced for volume households.",
+    desc:"A reliable, low-suds laundry powder formulated for hand-washing households. The 2 kg bag balances shelf price against per-wash value." },
+  { id:"p6", brand:"Bytes", name:"Cake Flour 2.5 kg", icon:"🌾", scope:"National", unit:95,
+    tagline:"Fine-milled cake flour for home baking and street-food vendors alike.",
+    desc:"Finely milled, low-protein flour suited to cakes, vetkoek and fried snacks — a favourite with informal food vendors who buy in bulk." },
+];
+
+/* ---------- state ---------- */
+let active = { product:null, container:null, qty:null };
+
+/* ---------- helpers ---------- */
+const $ = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+const money = n => CFG.ccy + Math.round(n).toLocaleString("en-IN");
+function tierFor(q){ return TIERS.find(t=> q>=t.min && q<=t.max) || TIERS[0]; }
+function containerListPrice(product, container, qty){ return product.unit * container.u * qty; }
+
+/* ---------- render hero feed ---------- */
+const feed = $("#feed");
+PRODUCTS.forEach((p, i)=>{
+  const el = document.createElement("div");
+  el.className = "herocard";
+  el.innerHTML = `
+    <div class="hc-media">
+      <span class="hc-progress">${i+1} / ${PRODUCTS.length}</span>
+      <span class="hc-scope">${p.scope}</span>
+      ${p.icon}
+      <div class="hc-swipehint">⌃<br>⌄</div>
+    </div>
+    <div class="hc-body">
+      <div class="hc-brand">${p.brand}</div>
+      <div class="hc-name">${p.name}</div>
+      <div class="hc-tagline">${p.tagline}</div>
+      <div class="hc-priceline"><span class="now">${money(p.unit)}</span><span class="per">/ unit · ex. bulk discount</span></div>
+      <div class="hc-packs">
+        ${CONTAINERS.map(c=>`<span class="hc-packchip">${c.icon} ${c.k}</span>`).join("")}
+      </div>
+    </div>
+    <div class="hc-actions">
+      <button class="btn ghost" data-details="${p.id}">Details</button>
+      <button class="btn" data-quickadd="${p.id}">⚡ Quick add</button>
+    </div>
+  `;
+  el.querySelector(".hc-media").addEventListener("click", ()=>openProduct(p.id, "details"));
+  el.querySelector(".hc-name").addEventListener("click", ()=>openProduct(p.id, "details"));
+  feed.appendChild(el);
+});
+
+feed.addEventListener("click", e=>{
+  const d = e.target.closest("[data-details]");
+  const q = e.target.closest("[data-quickadd]");
+  if(d) openProduct(d.dataset.details, "details");
+  if(q) openProduct(q.dataset.quickadd, "quick");
+});
+
+/* ---------- full-page product flow ---------- */
+function openProduct(id, mode){
+  const p = PRODUCTS.find(x=>x.id===id);
+  active.product = p; active.container = null; active.qty = null;
+
+  $("#pfSub").textContent = p.brand + " · " + p.scope;
+  $("#pfHero").textContent = p.icon;
+  $("#pfBrand").textContent = p.brand;
+  $("#pfName").textContent = p.name;
+  $("#pfDesc").textContent = p.desc;
+
+  $("#pfContainers").innerHTML = CONTAINERS.map(c=>`
+    <div class="container-opt" data-c="${c.k}">
+      <div class="cico">${c.icon}</div>
+      <div class="ctext"><div class="ck">${c.k}</div><div class="cu">${c.u} units per ${c.k.toLowerCase()}</div></div>
+      <div><div class="cprice">${money(p.unit * c.u)}</div><div class="crate">rate per ${c.k.toLowerCase()}</div></div>
+      <div class="cradio"></div>
+    </div>`).join("");
+  $$(".container-opt", $("#pfContainers")).forEach(el=>{
+    el.addEventListener("click", ()=> selectContainer(el.dataset.c));
+  });
+
+  $("#blockQuantity").style.display = "none";
+  $("#blockSummary").style.display = "none";
+  $("#pfCustomRow").classList.remove("show");
+  $("#pfCustomInput").value = "";
+
+  $("#pfScrim").classList.add("open");
+  $("#pfScreen").classList.add("open");
+
+  $("#pfScroll").scrollTop = 0;
+  if(mode === "quick"){
+    requestAnimationFrame(()=> requestAnimationFrame(()=>
+      $("#blockContainers").scrollIntoView({behavior:"smooth", block:"start"})
+    ));
+  }
+}
+function closeProduct(){
+  $("#pfScrim").classList.remove("open");
+  $("#pfScreen").classList.remove("open");
+}
+$("#pfBack").addEventListener("click", closeProduct);
+$("#pfScrim").addEventListener("click", closeProduct);
+
+function selectContainer(key){
+  active.container = CONTAINERS.find(c=>c.k===key);
+  active.qty = null;
+  $$(".container-opt", $("#pfContainers")).forEach(el=> el.classList.toggle("sel", el.dataset.c===key));
+
+  $("#pfQtyLabel").textContent = `How many ${key.toLowerCase()}s?`;
+  $("#pfChips").innerHTML = QTY_PRESETS.map(n=>{
+    const t = tierFor(n);
+    return `<button class="qchip" data-qty="${n}">
+      <span class="qn">${n}</span><span class="qu">${key.toLowerCase()}${n===1?"":"s"}</span>
+      ${t.off>0 ? `<span class="qtag">−${Math.round(t.off*100)}%</span>` : ""}
+    </button>`;
+  }).join("") + `<button class="qchip custom" data-qty="custom"><span class="qn">✎</span><span class="qu">Custom</span></button>`;
+
+  $$(".qchip", $("#pfChips")).forEach(el=>{
+    el.addEventListener("click", ()=>{
+      $$(".qchip", $("#pfChips")).forEach(x=>x.classList.remove("sel"));
+      el.classList.add("sel");
+      if(el.dataset.qty === "custom"){
+        $("#pfCustomRow").classList.add("show");
+        $("#pfCustomInput").focus();
+      } else {
+        $("#pfCustomRow").classList.remove("show");
+        selectQty(parseInt(el.dataset.qty, 10));
+      }
+    });
+  });
+
+  $("#blockQuantity").style.display = "block";
+  $("#blockSummary").style.display = "none";
+  requestAnimationFrame(()=> requestAnimationFrame(()=>
+    $("#blockQuantity").scrollIntoView({behavior:"smooth", block:"start"})
+  ));
+}
+
+$("#pfCustomApply").addEventListener("click", applyCustomQty);
+$("#pfCustomInput").addEventListener("keydown", e=>{ if(e.key==="Enter") applyCustomQty(); });
+function applyCustomQty(){
+  const v = parseInt($("#pfCustomInput").value, 10);
+  if(!v || v<1) return;
+  selectQty(v);
+}
+
+function selectQty(n){
+  active.qty = n;
+  renderSummary();
+  $("#blockSummary").style.display = "block";
+  requestAnimationFrame(()=> requestAnimationFrame(()=>
+    $("#blockSummary").scrollIntoView({behavior:"smooth", block:"start"})
+  ));
+}
+
+function renderSummary(){
+  const t = tierFor(active.qty);
+  const list = containerListPrice(active.product, active.container, active.qty);
+  const now = list * (1 - t.off);
+  $("#pfWas").textContent = t.off>0 ? money(list) : "";
+  $("#pfWas").style.display = t.off>0 ? "inline" : "none";
+  $("#pfNow").textContent = money(now);
+  $("#pfSave").style.display = t.off>0 ? "inline-flex" : "none";
+  $("#pfSave").textContent = t.off>0 ? "Save " + money(list-now) : "";
+
+  const effectiveRate = now / active.qty;
+  const listRate = active.product.unit * active.container.u;
+  $("#pfRate").textContent = t.off>0
+    ? `≈ ${money(effectiveRate)} per ${active.container.k.toLowerCase()} after discount — down from ${money(listRate)}`
+    : `${money(listRate)} per ${active.container.k.toLowerCase()} — add more for a bulk discount`;
+}
+
+$("#pfConfirm").addEventListener("click", ()=>{
+  const t = tierFor(active.qty);
+  const list = containerListPrice(active.product, active.container, active.qty);
+  const now = list * (1 - t.off);
+  const plural = active.qty===1 ? "" : "s";
+  closeProduct();
+  showToast(`✓ Added ${active.qty} ${active.container.k.toLowerCase()}${plural} — ${money(now)}`);
+});
+
+/* ---------- toast ---------- */
+let toastTimer;
+function showToast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove("show"), 2600);
+}
+</script>
+</body>
+</html>

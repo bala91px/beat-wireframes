@@ -1,0 +1,714 @@
+<!-- © 2026 91Pixels. All Rights Reserved. Internal presentation build — for demo/portfolio recording. Not linked from the client review page (index.html). -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="copyright" content="© 2026 91Pixels. All Rights Reserved.">
+<meta name="author" content="91Pixels">
+<meta name="robots" content="noindex, nofollow">
+<title>Beat · Rep App — Social Demo (Director's Commentary)</title>
+<style>
+  /* ============================================================
+     BEAT — Field Sales Rep App · SOCIAL DEMO
+     (was "Wireframe v5" — the director's-commentary shell.)
+
+     One shell, TWO prototypes, switchable live:
+       · V2 · Catalog   → Beat-Rep-Wireframe-v2.html  (fuller browse+build)
+       · V4 · Quick-Add → Beat-Rep-Wireframe-v4.html  (streamlined winner)
+
+     Each prototype is embedded UNTOUCHED via a same-origin <iframe>
+     (so both source files stay intact). The shell hides each file's
+     own caption/rails, then wraps whichever is shown with a shared
+     commentary system: a rep-flow rail, three colour-coded lenses
+     (UX / Growth / Strategy), a live interaction-cost meter, and a
+     ⚙️ Settings popover of feature flags — including Client Mode,
+     which strips every annotation down to the clean phone a client
+     sees. The commentary is VERSION-AWARE and updates live as you
+     move through whichever prototype is on screen (driven by
+     observing the same-origin iframe's DOM). Flags + the selected
+     version persist to localStorage so a video shoot is stable.
+     ============================================================ */
+
+  :root{
+    --ink:#1c1f24; --ink-2:#565b64; --ink-3:#8a8f98;
+    --line:#e3e5e9; --line-2:#d3d6db;
+    --fill:#f4f5f7; --fill-2:#eceef1; --fill-3:#e0e3e8;
+    --paper:#ffffff; --primary:#23262c; --primary-ink:#ffffff;
+    --stage:#dde0e5;
+    --radius:14px; --ease:cubic-bezier(.22,1,.36,1);
+
+    --lens-ux:#2f6fed;      --lens-ux-tint:#eef3fe;    --lens-ux-ink:#1b4fc0;
+    --lens-growth:#8c00ff;  --lens-growth-tint:#f6eeff; --lens-growth-ink:#7a12d6;
+    --lens-strategy:#b0812f;--lens-strategy-tint:#faf3e6;--lens-strategy-ink:#8a641f;
+
+    --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:var(--font);
+    background:radial-gradient(1200px 600px at 50% -10%, #eef0f3 0%, var(--stage) 60%);
+    color:var(--ink); -webkit-font-smoothing:antialiased; min-height:100vh;
+  }
+
+  /* ===== TOP CAPTION BAR ===== */
+  .caption{ display:flex; align-items:center; gap:12px; padding:12px 22px;
+    border-bottom:1px solid var(--line); background:rgba(255,255,255,.8);
+    backdrop-filter:blur(8px); position:sticky; top:0; z-index:60; flex-wrap:wrap; }
+  .caption .brand{ display:flex; align-items:center; gap:10px; }
+  .caption .dot{ width:10px; height:10px; border-radius:50%; background:var(--primary); }
+  .caption h1{ font-size:14px; margin:0; letter-spacing:.02em; font-weight:650; }
+  .caption .tag{ font-size:11px; color:var(--ink-2); border:1px solid var(--line-2);
+    padding:2px 8px; border-radius:20px; background:var(--paper); }
+  .caption .tag.accent{ border-color:transparent; color:#fff;
+    background:linear-gradient(103deg,#a24bff,#ff57c7); font-weight:600; }
+  .caption .spacer{ flex:1; }
+
+  /* version switcher (segmented) */
+  .vswitch{ display:inline-flex; background:var(--fill-2); border:1px solid var(--line-2);
+    border-radius:20px; padding:2px; gap:2px; }
+  .vswitch button{ border:none; background:transparent; font:inherit; font-size:12px; font-weight:650;
+    color:var(--ink-2); padding:6px 13px; border-radius:16px; cursor:pointer; display:flex; align-items:center; gap:6px;
+    transition:background .18s var(--ease), color .18s var(--ease); }
+  .vswitch button .vdot{ width:6px; height:6px; border-radius:50%; background:currentColor; opacity:.5; }
+  .vswitch button.on{ background:var(--paper); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.14); }
+  .vswitch button.on .vdot{ opacity:1; }
+  .vswitch button:focus-visible{ outline:2px solid var(--primary); outline-offset:2px; }
+
+  .gearbtn{ display:flex; align-items:center; gap:7px; height:32px; padding:0 13px; border-radius:20px;
+    border:1px solid var(--line-2); background:var(--paper); color:var(--ink); font:inherit;
+    font-size:12.5px; font-weight:600; cursor:pointer; }
+  .gearbtn:hover{ background:var(--fill); }
+  .gearbtn.live{ border-color:var(--primary); box-shadow:inset 0 0 0 1px var(--primary); }
+  body.client-mode .meta-tag{ display:none; }
+
+  /* ===== SETTINGS POPOVER ===== */
+  .settings{ position:absolute; top:52px; right:22px; width:320px; z-index:70;
+    background:var(--paper); border:1px solid var(--line-2); border-radius:16px;
+    box-shadow:0 24px 60px -22px rgba(20,22,28,.5), 0 6px 16px -8px rgba(20,22,28,.28);
+    padding:8px; opacity:0; visibility:hidden; transform:translateY(-8px) scale(.98);
+    transform-origin:top right; transition:opacity .18s ease, transform .18s ease, visibility 0s linear .18s; }
+  .settings.open{ opacity:1; visibility:visible; transform:none; transition:opacity .18s ease, transform .18s ease; }
+  .settings .s-head{ padding:10px 12px 8px; }
+  .settings .s-head .st{ font-size:13px; font-weight:700; }
+  .settings .s-head .ss{ font-size:11px; color:var(--ink-3); }
+  .set-row{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:11px; }
+  .set-row:hover{ background:var(--fill); }
+  .set-txt{ flex:1; min-width:0; }
+  .set-k{ font-size:12.5px; font-weight:650; display:flex; align-items:center; gap:7px; }
+  .set-s{ font-size:11px; color:var(--ink-3); margin-top:2px; line-height:1.35; }
+  .set-row.master{ background:#f7f7f8; border:1px solid var(--line); margin-bottom:4px; }
+  .set-row.master .set-k{ font-size:13px; }
+  .swatch{ width:9px; height:9px; border-radius:3px; flex-shrink:0; }
+  .swatch.ux{ background:var(--lens-ux); }
+  .swatch.growth{ background:linear-gradient(120deg,var(--lens-growth),#ff57c7); }
+  .swatch.strategy{ background:var(--lens-strategy); }
+
+  .s-group{ margin-top:2px; }
+  .s-grouplabel{ font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+    font-weight:700; padding:10px 12px 4px; }
+  .s-group.locked{ opacity:.38; pointer-events:none; filter:grayscale(.4); }
+  .s-lockmsg{ font-size:11px; color:var(--ink-3); padding:2px 12px 10px; display:none; }
+  .s-lockmsg.show{ display:block; }
+
+  .switch{ width:40px; height:23px; border-radius:23px; background:var(--line-2); position:relative;
+    cursor:pointer; transition:background .2s var(--ease); flex-shrink:0; border:none; padding:0; }
+  .switch::after{ content:""; position:absolute; top:2.5px; left:2.5px; width:18px; height:18px;
+    border-radius:50%; background:#fff; transition:transform .2s; box-shadow:0 1px 3px rgba(0,0,0,.32); }
+  .switch.on{ background:var(--primary); }
+  .switch.on::after{ transform:translateX(17px); }
+  .switch.ux.on{ background:var(--lens-ux); }
+  .switch.growth.on{ background:linear-gradient(120deg,var(--lens-growth),#ff57c7); }
+  .switch.strategy.on{ background:var(--lens-strategy); }
+  .switch:focus-visible{ outline:2px solid var(--primary); outline-offset:2px; }
+
+  /* ===== WORKSPACE ===== */
+  .workspace{ display:flex; justify-content:center; align-items:flex-start; gap:22px;
+    padding:26px 22px 64px; }
+
+  /* left rep-flow rail */
+  .flowrail{ width:186px; flex-shrink:0; position:sticky; top:74px; }
+  .flowrail .rail-title{ font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:700; margin:2px 0 14px 4px; }
+  .flowstep{ position:relative; display:flex; gap:11px; align-items:flex-start; padding:0 0 20px 0;
+    border:none; background:transparent; width:100%; text-align:left; font:inherit; cursor:default; }
+  .flowstep.clickable{ cursor:pointer; }
+  .flowstep.clickable:hover .flbl{ color:var(--ink); }
+  .flowstep:not(:last-child)::before{ content:""; position:absolute; left:13px; top:28px; bottom:2px;
+    width:2px; background:var(--line-2); }
+  .flowstep.done:not(:last-child)::before{ background:var(--primary); }
+  .flowstep .fnum{ width:27px; height:27px; border-radius:50%; flex-shrink:0; display:flex;
+    align-items:center; justify-content:center; font-size:12px; font-weight:800;
+    background:var(--paper); border:2px solid var(--line-2); color:var(--ink-3); transition:.22s var(--ease); }
+  .flowstep.active .fnum{ background:var(--primary); border-color:var(--primary); color:#fff;
+    box-shadow:0 0 0 5px rgba(35,38,44,.10); }
+  .flowstep.done .fnum{ background:#fff; border-color:var(--primary); color:var(--primary); }
+  .flowstep .flbl{ font-size:12.5px; font-weight:650; padding-top:4px; line-height:1.2; color:var(--ink-2); }
+  .flowstep .fsub{ font-size:10.5px; color:var(--ink-3); font-weight:500; margin-top:2px; }
+  .flowstep.active .flbl{ color:var(--ink); }
+  .flowstep:focus-visible{ outline:2px solid var(--primary); outline-offset:2px; border-radius:8px; }
+
+  /* center · phone host (embeds the prototype iframe) */
+  .stagecol{ display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .phone-host{ position:relative; width:420px; height:840px; }
+  .phone-host iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; background:transparent;
+    display:block; opacity:0; visibility:hidden; transition:opacity .22s var(--ease); }
+  .phone-host iframe.show{ opacity:1; visibility:visible; }
+  .phone-hint{ font-size:11px; color:var(--ink-3); text-align:center; max-width:360px; line-height:1.5; }
+
+  /* right · commentary rail */
+  .commentary{ width:340px; flex-shrink:0; position:sticky; top:74px;
+    max-height:calc(100vh - 96px); overflow-y:auto; padding-right:2px; }
+  .commentary::-webkit-scrollbar{ width:6px; }
+  .commentary::-webkit-scrollbar-thumb{ background:var(--line-2); border-radius:6px; }
+
+  .cm-legend{ display:flex; flex-wrap:wrap; gap:6px 12px; padding:0 2px 12px; }
+  .cm-legend .lg{ display:flex; align-items:center; gap:6px; font-size:10.5px; color:var(--ink-2); font-weight:600; }
+  .cm-legend .lg .sw{ width:9px; height:9px; border-radius:3px; }
+
+  .stage-indicator{ display:flex; align-items:center; gap:9px; padding:11px 13px; border-radius:12px;
+    background:var(--primary); color:#fff; margin-bottom:12px; }
+  .stage-indicator .si-k{ font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; opacity:.65; font-weight:700; }
+  .stage-indicator .si-v{ font-size:13.5px; font-weight:700; margin-top:1px; }
+  .stage-indicator .si-step{ margin-left:auto; font-size:11px; font-family:var(--mono); opacity:.8; }
+
+  .costmeter{ border:1px solid var(--line); border-radius:13px; background:var(--paper); padding:13px 14px; margin-bottom:14px;
+    position:relative; overflow:hidden; }
+  .costmeter::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+    background:linear-gradient(180deg,var(--lens-growth),#ff57c7); }
+  .costmeter .cm-k{ font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); font-weight:700; }
+  .costmeter .cm-main{ display:flex; align-items:baseline; gap:7px; margin-top:6px; }
+  .costmeter .cm-now{ font-size:30px; font-weight:850; line-height:1; letter-spacing:-.02em;
+    background:linear-gradient(120deg,var(--lens-growth),#ff57c7); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .costmeter .cm-unit{ font-size:12px; color:var(--ink-2); font-weight:650; }
+  .costmeter .cm-vs{ margin-top:8px; font-size:11.5px; color:var(--ink-2); line-height:1.4; }
+  .costmeter .cm-vs b{ color:var(--ink); }
+  .costmeter .cm-bar{ height:7px; border-radius:6px; background:var(--fill-2); margin-top:10px; overflow:hidden; }
+  .costmeter .cm-fill{ height:100%; width:12%; border-radius:6px; background:linear-gradient(90deg,var(--lens-growth),#ff57c7);
+    transition:width .45s var(--ease); }
+  .costmeter .cm-drop{ font-size:10.5px; font-weight:800; color:var(--lens-growth-ink); margin-top:7px; }
+
+  #cardHost{ display:flex; flex-direction:column; gap:11px; }
+  .ccard{ border:1px solid var(--line); border-left-width:3px; border-radius:12px; background:var(--paper);
+    padding:13px 14px; animation:ccIn .32s var(--ease) backwards; }
+  .ccard.lens-ux{ border-left-color:var(--lens-ux); }
+  .ccard.lens-growth{ border-left-color:var(--lens-growth); }
+  .ccard.lens-strategy{ border-left-color:var(--lens-strategy); }
+  .cc-top{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+  .cc-lens{ font-size:9px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:2px 7px; border-radius:20px; }
+  .lens-ux .cc-lens{ color:var(--lens-ux-ink); background:var(--lens-ux-tint); }
+  .lens-growth .cc-lens{ color:var(--lens-growth-ink); background:var(--lens-growth-tint); }
+  .lens-strategy .cc-lens{ color:var(--lens-strategy-ink); background:var(--lens-strategy-tint); }
+  .cc-metric{ margin-left:auto; font-size:10px; font-family:var(--mono); font-weight:700; color:var(--ink-2);
+    background:var(--fill); padding:2px 7px; border-radius:6px; white-space:nowrap; }
+  .ccard h4{ font-size:13px; margin:0 0 5px; font-weight:750; line-height:1.25; }
+  .ccard p{ font-size:11.5px; color:var(--ink-2); line-height:1.55; margin:0; }
+  .ccard p code{ font-family:var(--mono); font-size:10.5px; background:var(--fill-2); padding:1px 4px; border-radius:4px; }
+  .cc-principle{ display:inline-block; margin-top:9px; font-size:10px; font-weight:700; color:var(--ink-3);
+    border:1px dashed var(--line-2); padding:2px 8px; border-radius:20px; }
+  .cc-empty{ font-size:12px; color:var(--ink-3); text-align:center; padding:26px 14px; line-height:1.6;
+    border:1px dashed var(--line-2); border-radius:12px; }
+
+  .thesis{ margin-top:18px; padding-top:16px; border-top:1px solid var(--line); }
+  .thesis .th-title{ font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+    font-weight:700; margin:0 0 11px 2px; display:flex; align-items:center; gap:7px; }
+  .thesis .th-title::before{ content:"◇"; color:var(--ink-2); }
+
+  @keyframes ccIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+
+  /* client mode — hide all commentary chrome (version switcher stays) */
+  body.client-mode .flowrail,
+  body.client-mode .commentary{ display:none; }
+  body:not(.flow-on) .flowrail{ display:none; }
+
+  @media (max-width:1180px){
+    .workspace{ flex-wrap:wrap; }
+    .flowrail{ order:2; width:100%; position:static; display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
+    .flowrail .rail-title{ display:none; }
+    .flowstep{ flex-direction:column; align-items:center; min-width:96px; padding:0; text-align:center; gap:5px; }
+    .flowstep:not(:last-child)::before{ display:none; }
+    .flowstep .flbl{ font-size:11px; padding-top:0; }
+    .flowstep .fsub{ display:none; }
+    .stagecol{ order:1; width:100%; }
+    .commentary{ order:3; width:100%; position:static; max-height:none; }
+    #cardHost{ display:grid; grid-template-columns:1fr 1fr; }
+    .thesis{ grid-column:1 / -1; }
+  }
+  @media (max-width:680px){
+    .phone-host{ width:100%; max-width:420px; }
+    #cardHost{ grid-template-columns:1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  }
+</style>
+</head>
+<body class="flow-on">
+
+  <div class="caption">
+    <div class="brand"><span class="dot"></span><h1>Beat · Field Rep App</h1></div>
+    <span class="tag accent meta-tag">Social demo</span>
+    <span class="tag meta-tag">🎬 Director's commentary</span>
+
+    <div class="vswitch" id="vswitch" role="tablist" aria-label="Prototype version">
+      <button role="tab" data-ver="v2"><span class="vdot"></span>V2 · Catalog</button>
+      <button role="tab" data-ver="v4"><span class="vdot"></span>V4 · Quick-Add</button>
+    </div>
+
+    <div class="spacer"></div>
+    <span class="tag">🇿🇦 South Africa · ₹</span>
+    <span class="tag">© 91Pixels · Internal use only</span>
+    <button class="gearbtn" id="gearBtn" aria-haspopup="true" aria-expanded="false">
+      <span>⚙️</span> Settings
+    </button>
+
+    <div class="settings" id="settings" role="dialog" aria-label="Commentary settings">
+      <div class="s-head">
+        <div class="st">Presentation settings</div>
+        <div class="ss">Toggle what's shown — saved for your video shoot.</div>
+      </div>
+
+      <div class="set-row master">
+        <div class="set-txt">
+          <div class="set-k">🎬 Client Mode</div>
+          <div class="set-s">What the client sees. Hides every annotation — just the clean phone.</div>
+        </div>
+        <button class="switch" id="swClient" role="switch" aria-checked="false" aria-label="Client Mode"></button>
+      </div>
+
+      <div class="s-group" id="layerGroup">
+        <div class="s-grouplabel">Commentary layers</div>
+        <div class="set-row">
+          <div class="set-txt"><div class="set-k">🧭 Rep-flow rail</div>
+            <div class="set-s">The journey stepper on the left.</div></div>
+          <button class="switch" id="swFlow" role="switch" aria-checked="true" aria-label="Rep-flow rail"></button>
+        </div>
+        <div class="set-row">
+          <div class="set-txt"><div class="set-k"><span class="swatch ux"></span>UX &amp; Usability</div>
+            <div class="set-s">Fitts, Hick, progressive disclosure, accessibility.</div></div>
+          <button class="switch ux" id="swUx" role="switch" aria-checked="true" aria-label="UX layer"></button>
+        </div>
+        <div class="set-row">
+          <div class="set-txt"><div class="set-k"><span class="swatch growth"></span>Growth &amp; Psychology</div>
+            <div class="set-s">Interaction-cost, anchoring, discount tactics.</div></div>
+          <button class="switch growth" id="swGrowth" role="switch" aria-checked="true" aria-label="Growth layer"></button>
+        </div>
+        <div class="set-row">
+          <div class="set-txt"><div class="set-k"><span class="swatch strategy"></span>Co-founder Strategy</div>
+            <div class="set-s">Positioning, the wedge, the AI-native thesis.</div></div>
+          <button class="switch strategy" id="swStrategy" role="switch" aria-checked="true" aria-label="Strategy layer"></button>
+        </div>
+      </div>
+      <div class="s-lockmsg" id="lockMsg">🎬 Client Mode is on — layers are hidden.</div>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <nav class="flowrail" id="flowrail" aria-label="Rep flow">
+      <p class="rail-title">Rep flow</p>
+      <div id="flowsteps"></div>
+    </nav>
+
+    <div class="stagecol">
+      <div class="phone-host">
+        <iframe id="frameV2" title="Beat V2 · Catalog prototype" src="demo-catalog.html" scrolling="no"></iframe>
+        <iframe id="frameV4" title="Beat V4 · Quick-Add prototype" src="demo-quickadd.html" scrolling="no"></iframe>
+      </div>
+      <p class="phone-hint" id="phoneHint">—</p>
+    </div>
+
+    <aside class="commentary" id="commentary" aria-label="Design commentary">
+      <div class="cm-legend">
+        <span class="lg"><span class="sw" style="background:var(--lens-ux)"></span>UX</span>
+        <span class="lg"><span class="sw" style="background:linear-gradient(120deg,var(--lens-growth),#ff57c7)"></span>Growth</span>
+        <span class="lg"><span class="sw" style="background:var(--lens-strategy)"></span>Strategy</span>
+      </div>
+      <div class="stage-indicator">
+        <div><div class="si-k">Now showing</div><div class="si-v" id="siLabel">—</div></div>
+        <div class="si-step" id="siStep">— / —</div>
+      </div>
+      <div class="costmeter" id="costMeter" style="display:none">
+        <div class="cm-k">Interaction cost · this order</div>
+        <div class="cm-main"><span class="cm-now" id="cmTaps">0</span><span class="cm-unit">taps to a priced order</span></div>
+        <div class="cm-vs">Old v3 stepper ≈ <b>~25 taps</b> (open sheet · +/− twenty times · read discount table)</div>
+        <div class="cm-bar"><div class="cm-fill" id="cmFill"></div></div>
+        <div class="cm-drop" id="cmDrop">Start an order to watch the cost drop →</div>
+      </div>
+      <div id="cardHost"></div>
+      <div class="thesis" id="thesis">
+        <p class="th-title">The bigger picture</p>
+        <div id="thesisHost"></div>
+      </div>
+    </aside>
+  </div>
+
+<script>
+/* ============================================================
+   COMMENTARY DATA
+   V4 = keyed by stage (feed/product/container/quantity/summary/meta)
+   V2 = flat array (each card carries its own stage + lens)
+   ============================================================ */
+const COMMENTARY_V4 = {
+  feed:[
+    { lens:"ux", title:"One product, one screen", principle:"Cognitive Load Theory", metric:"1 SKU / screen",
+      body:"The reels-style vertical snap shows a single SKU at a time — hero, name, price, container chips. No grid to scan means <b>near-zero visual search</b>, so a standing, distracted rep parses each product in one glance." },
+    { lens:"ux", title:"Two verbs, thumb-anchored", principle:"Fitts's Law", metric:"≥48px targets",
+      body:"\"Details\" and \"⚡ Quick add\" sit as full-width targets low on the screen, inside the natural thumb arc. Large hit areas at the bottom edge are the <b>fastest, lowest-miss</b> tap on a one-handed phone." },
+    { lens:"growth", title:"One product, one decision", principle:"Hick's Law", metric:"1 SKU per screen",
+      body:"Reels-style single-product screens strip choice overload to a binary: skip or <b>⚡ Quick add</b>. Fewer competing options per frame means faster commits and less deliberation fatigue across a 200-order day." },
+    { lens:"strategy", title:"Rep-speed is the wedge", principle:"GTM Wedge", metric:"Rep adoption = distribution",
+      body:"Reps are the adoption gatekeeper — if the app is slow, they revert to paper. Beat is an SFA built around <b>counter-speed, not admin reporting</b>, so the tool wins the rep and the rep wins the account." },
+    { lens:"strategy", title:"The feed is shelf space", principle:"Merchandising Surface", metric:"Attach rate / visit",
+      body:"A reels-style, one-product-per-screen feed turns browsing into <b>merchandising real estate</b> — the brand controls what surfaces first, making the upsell a placement decision, not a rep's memory." },
+  ],
+  product:[
+    { lens:"growth", title:"Reveal effort only on demand", principle:"Progressive Disclosure", metric:"detail = opt-in",
+      body:"The full details block stays behind a deliberate tap, so the fast path never pays for information the rep already knows. <b>Perceived effort drops</b> because the flow only surfaces depth when asked." },
+    { lens:"strategy", title:"Low-literacy, low-bandwidth by design", principle:"Emerging-Market Fit", metric:"Works at 2G / one-thumb",
+      body:"One product per screen isn't minimalism — it's <b>field infrastructure</b>. Big tap targets, image-first, and light payloads scale across emerging-market shops with weak signal and mixed literacy." },
+  ],
+  container:[
+    { lens:"ux", title:"Reveal one step at a time", principle:"Progressive Disclosure", metric:"",
+      body:"Only the container block is live on entry; quantity and summary stay hidden until they matter. Picking Box/Carton/Pallet <b>auto-scrolls</b> the next step into view, so the rep is never shown a decision before it's relevant." },
+    { lens:"ux", title:"Rates you read, not recall", principle:"Recognition over Recall", metric:"",
+      body:"Each container shows its own units-per-container and rate on the option itself. The rep <b>recognises</b> \"Carton = 24\" in place instead of holding pack maths in memory while comparing." },
+    { lens:"growth", title:"Pre-chunked buying units", principle:"Chunking", metric:"6 / 24 / 1152",
+      body:"Box / Carton / Pallet convert raw counts into <b>named, memorised units</b> with rates attached. The rep reasons in stock language, not arithmetic, so Step 1 is a recognition task, not a calculation." },
+  ],
+  quantity:[
+    { lens:"ux", title:"Four chips beat a keypad", principle:"Hick's Law", metric:"∞ → 5 choices",
+      body:"Curated quick-picks [5][10][20][25] collapse an infinite number field into a handful of high-frequency choices. A short, bounded set <b>slashes decision time</b> versus typing into an open pad at the counter." },
+    { lens:"ux", title:"The discount is on the button", principle:"Recognition over Recall", metric:"0 extra taps",
+      body:"Every chip carries its own bulk tag (−5%, −10%, −15%), so the incentive to size up is <b>visible at the moment of choice</b> — the rep sees the reward before committing, not buried in a later summary." },
+    { lens:"ux", title:"Auto-scroll = 'you did it'", principle:"Immediate Feedback", metric:"tap → confirm",
+      body:"The instant a chip is tapped, the screen glides to the summary — motion doubles as confirmation and forward momentum. The [Custom] escape hatch stays for the edge case without <b>penalising the 90% happy path</b>." },
+    { lens:"growth", title:"The hero: 20 taps become 1", principle:"Interaction-Cost Reduction", metric:"~22 taps → 1",
+      body:"Pre-computed chips collapse the entire quantity decision to a <b>single tap</b>. What was a 20+ tap stepper grind is now one gesture — multiplied across hundreds of orders daily, that's minutes reclaimed per rep, per fleet." },
+    { lens:"growth", title:"The chips are the right answers", principle:"Default & Preselection Bias", metric:"0 typed digits",
+      body:"Curating <b>5 / 10 / 20 / 25</b> pre-frames the 'correct' order sizes so the rep selects rather than deliberates. Sensible defaults remove the blank-field pause and quietly steer volume upward." },
+    { lens:"growth", title:"The 15% chip pulls order size up", principle:"Goal-Gradient / Decoy", metric:"5→9→10→20 nudge",
+      body:"Each chip wears its discount (−5 / −10 / −15%), turning the tier ladder into a visible reward gradient. The <b>20+ = 15%</b> chip acts as a decoy goal that makes 20 feel like the smart buy, not the big one." },
+    { lens:"growth", title:"Momentum carries the tap home", principle:"Goal-Gradient (Momentum)", metric:"0 nav taps",
+      body:"Auto-scroll to summary the instant a chip is picked removes the dead 'now what?' beat. The rep is <b>swept toward completion</b> on their own momentum instead of hunting for a next button." },
+    { lens:"strategy", title:"Every tap is lost GMV", principle:"Interaction Cost", metric:"GMV / rep-hour",
+      body:"Quick chips [5][10][20][25] collapse the order to a single tap. <b>Lower interaction cost = more completed orders = more GMV per rep-hour</b> — the exact metric that sells the platform to a distributor." },
+    { lens:"strategy", title:"Discount chips steer order size", principle:"Margin Lever", metric:"Avg units / order ↑",
+      body:"Baking the 5/10/15% tier onto each chip nudges the rep past the next threshold at the counter — the <b>tiered discount is a margin and order-size lever the business sets centrally</b>, not a rep's negotiation." },
+  ],
+  summary:[
+    { lens:"ux", title:"Show the saving, not just the sum", principle:"Visibility of System Status", metric:"",
+      body:"Struck-through list price, \"% off\" and a <b>\"Save ₹X\"</b> badge make the value concrete before \"Add to order.\" Framing the outcome as money saved builds trust and lets the rep confirm at a glance." },
+    { lens:"growth", title:"Anchor first, then the win", principle:"Anchoring + Loss-Aversion", metric:"₹ saved > % off",
+      body:"The struck-through list price anchors value, then <b>'Save ₹X'</b> lands the discount as a concrete gain-you'd-lose. Framing the number as saved money, not an abstract % off, hits harder via loss aversion." },
+    { lens:"strategy", title:"Anchor the save, not the price", principle:"Behavioral Anchoring", metric:"Order completion rate",
+      body:"\"Save ₹X\" reframes bulk from spend to gain — closing the order faster while the distributor keeps pricing power. The summary is where <b>rep habit converts into repeatable GMV</b>." },
+  ],
+  meta:[
+    { lens:"growth", title:"v3 → v4: friction became the feature", principle:"Interaction-Cost (System)", metric:"20 taps → 1",
+      body:"v3 made the rep open a sheet, tap a +/− stepper ~20 times, then decode a discount table. v4 <b>bakes the discount into each chip</b> — the tier math is pre-solved, so cognition and taps both collapse toward one." },
+    { lens:"ux", title:"Accessible by construction", principle:"WCAG 2.2 / Inclusive", metric:"44px · reduced-motion",
+      body:"Selection reads by fill <b>and</b> a check glyph, never colour alone; targets clear 44px; focus rings stay visible; and <code>prefers-reduced-motion</code> swaps auto-scroll for an instant jump — fast for everyone, usable for all." },
+    { lens:"strategy", title:"The moat is the engine, not the UI", principle:"Defensibility", metric:"Habit-loop lock-in",
+      body:"The winning screen is copyable; the <b>catalog + region-aware pricing + rep habit loop</b> is not. Defensibility compounds as reps' daily beats train the recommendation and discount logic." },
+    { lens:"strategy", title:"AI-native delivery is the edge", principle:"Delivery Model", metric:"Days, not weeks",
+      body:"This wireframe was built <b>design-lead-steering-AI</b> — the human owns the research on cutting interaction cost while the agent renders the flows. That's how 91Pixels ships client-grade prototypes fast and cheap." },
+  ],
+};
+
+/* V2 catalog commentary — flat array (from the parallel 3-lens expert pass).
+   Each: { stage, lens, title, body, principle, metric } */
+const COMMENTARY_V2 = [
+  { stage:"login", lens:"ux", title:"Two taps, one thumb", principle:"Minimal-friction auth", metric:"sub-5s sign-in",
+    body:`Employee ID + PIN (with OTP fallback) sits in the lower half of the screen for <b>one-handed reach</b> at a busy counter. No email, no password recall — enter, done.` },
+
+  { stage:"beat", lens:"strategy", title:"Store pick = the pricing engine", principle:"Context-as-config", metric:"1 tap → pricing",
+    body:`Tapping a store fixes the <b>province</b>, which drives both pricing and which SKUs are even stockable. This single choice is the real moat — every downstream quote is correct by construction.` },
+  { stage:"beat", lens:"ux", title:"The route remembers, so the rep doesn't", principle:"Recognition over Recall", metric:"0 re-keyed details",
+    body:`"Today's beat" lists the day's stores with details attached, killing the pain of <b>re-writing shop info on every note</b>. Recognition, not recall — pick from the list, don't re-type it.` },
+
+  { stage:"catalog", lens:"ux", title:"Search-forward, mis-quote-proof", principle:"Error Prevention (IA)", metric:"unstockable = hidden",
+    body:`Search is pinned at top and <b>region availability is enforced</b> — only SKUs sellable in this province show; the rest greyed "Not stocked here." You physically can't quote something the store can't get.` },
+  { stage:"catalog", lens:"growth", title:"Fast-moving here = the repeat lane", principle:"Recency / Habit Loop", metric:"re-order · 1 tap",
+    body:`The "⚡ Fast-moving here" strip surfaces <b>this store's</b> most re-ordered SKUs first, turning a browse into a one-tap re-order. Recency + habit collapse the daily decision into muscle memory.` },
+  { stage:"catalog", lens:"growth", title:"Quick-add without leaving", principle:"Flow Preservation", metric:"0 context switches",
+    body:`Add straight from the card while <b>staying in the catalog</b>. No modal, no context-switch back and forth — the flow never breaks, so the basket keeps growing instead of stalling mid-build.` },
+  { stage:"catalog", lens:"strategy", title:"Fast-movers as a merchandising surface", principle:"Attach-Rate Control", metric:"store-level slot",
+    body:`The per-store fast-mover strip isn't just convenience — it's a <b>controllable attach-rate lever</b>. Whoever curates that strip shapes the basket, making it a monetizable placement surface later.` },
+
+  { stage:"product", lens:"ux", title:"Pack sizing, not guesswork", principle:"Progressive Disclosure", metric:"units + kg / tier",
+    body:`Box / Carton / Pallet each show <b>units + weight</b> with a pack-conversion line and a minimum-order rule up front. Progressive disclosure hides the math until it's needed, then shows it exactly when it is.` },
+  { stage:"product", lens:"growth", title:"Discounts made LOUD", principle:"Anchoring + Loss Aversion", metric:"4 discount cues",
+    body:`List price struck through, % off, discounted rate, and <b>"you save ₹X"</b> on the line total. The anchor is the crossed-out price; the loss-framed saving makes not ordering feel like leaving money behind.` },
+  { stage:"product", lens:"strategy", title:"Weight up front is the ops edge", principle:"Ops Differentiator", metric:"live kg / line",
+    body:`Line weight updates with pack × qty <b>before the order is placed</b>. Knowing the load early is exactly the differentiator the field asked for — the transport call gets made at the counter, not after.` },
+
+  { stage:"cart", lens:"growth", title:"Value + savings pull the basket up", principle:"Goal-Gradient Effect", metric:"₹ value + ₹ saved",
+    body:`Running cart value and <b>total bulk discount saved</b> stay visible, creating a goal-gradient — the closer a bigger discount tier feels, the more one more line gets added to reach it.` },
+  { stage:"cart", lens:"ux", title:"Edit inline, recompute instantly", principle:"Direct Manipulation", metric:"0 round-trips",
+    body:`Change any line in place and weight + savings <b>recompute immediately</b>. Instant feedback closes the loop, so the rep trusts the numbers without leaving the cart to re-verify anything.` },
+  { stage:"cart", lens:"strategy", title:"Suggested transport class", principle:"Logistics as Product", metric:"bakkie vs truck",
+    body:`The "Shipping & load" block totals weight and cartons, then suggests a class — <b>bakkie vs truck</b>. This turns Beat from an order pad into a logistics tool, a hard-to-copy operational hook.` },
+
+  { stage:"invoice", lens:"strategy", title:"One number everyone plans around", principle:"Shared Source of Truth", metric:"1 doc · 2 stakeholders",
+    body:`The invoice carries <b>total weight + load class</b>, so shop owner and transport plan around the same figure. Sharing on WhatsApp + saving to the beat log closes the loop on SA's default channel.` },
+  { stage:"invoice", lens:"ux", title:"VAT validity: flagged, not faked", principle:"Honest System Status", metric:"open · visible",
+    body:`The VAT-invoice legal-validity question is <b>surfaced as an open discovery item</b>, not silently assumed. Honest about what isn't resolved yet — de-risking the build instead of shipping a false claim.` },
+
+  { stage:"meta", lens:"strategy", title:"Why the fuller flow still earns its place", principle:"Progressive, Not Lossy", metric:"v2 richness → v4 speed",
+    body:`Quick-Add (v4) hides complexity for speed — but bulk pack conversion, live weight, and province availability are <b>real FMCG constraints, not friction</b>. v2 proves the model the streamlined version safely compresses.` },
+];
+
+/* ============================================================
+   VERSION CONFIG
+   ============================================================ */
+const LENS = { ux:{label:"UX"}, growth:{label:"Growth"}, strategy:{label:"Strategy"} };
+
+const VDATA = {
+  v4:{
+    frameId:"frameV4",
+    hint:"Swipe up/down through one product at a time. Tap a card to open it — choosing a container auto-scrolls you to quantity, choosing a quantity auto-scrolls you to the order summary.",
+    steps:[
+      {key:"feed",      n:"Browse feed",     s:"one product / screen"},
+      {key:"product",   n:"Open product",    s:"details on demand"},
+      {key:"container", n:"Choose container",s:"box · carton · pallet"},
+      {key:"quantity",  n:"Pick quantity",   s:"5 · 10 · 20 · 25 chips"},
+      {key:"summary",   n:"Confirm order",   s:"priced & added"},
+    ],
+    stageLabel:{feed:"Browsing the feed",product:"Product opened",container:"Container chosen",quantity:"Quantity + summary",summary:"Order summary"},
+    costMeter:true,
+    tapByStage:{feed:0,product:1,container:2,quantity:3,summary:3},
+    clickableRail:false,
+    cardsForStage(st){ return st==="quantity" ? COMMENTARY_V4.quantity.concat(COMMENTARY_V4.summary) : (COMMENTARY_V4[st]||[]); },
+    metaCards(){ return COMMENTARY_V4.meta; },
+    derive(doc){
+      const pf = doc.querySelector("#pfScreen");
+      if(!pf || !pf.classList.contains("open")) return "feed";
+      if(doc.querySelector("#pfChips .qchip.sel")) return "quantity";
+      if(doc.querySelector("#pfContainers .container-opt.sel")) return "container";
+      return "product";
+    },
+    nav:null,
+  },
+  v2:{
+    frameId:"frameV2",
+    hint:"Sign in → pick a store (that sets the region) → search or tap a ⚡ fast-mover → set pack, quantity & discount → review the cart's value + weight → invoice on WhatsApp. Click a rep-flow step to jump.",
+    steps:[
+      {key:"login",   n:"Log in",       s:"ID + PIN / OTP"},
+      {key:"beat",    n:"Today's beat", s:"pick the shop"},
+      {key:"catalog", n:"Catalog",      s:"search · fast-movers"},
+      {key:"product", n:"Add product",  s:"pack · qty · discount"},
+      {key:"cart",    n:"Order cart",   s:"value · savings · weight"},
+      {key:"invoice", n:"Invoice",      s:"weight · WhatsApp"},
+    ],
+    stageLabel:{login:"Sign in",beat:"Today's beat",catalog:"Catalog",product:"Add product",cart:"Order cart",invoice:"Invoice"},
+    costMeter:false,
+    clickableRail:true,
+    cardsForStage(st){ return COMMENTARY_V2.filter(c=>c.stage===st); },
+    metaCards(){ return COMMENTARY_V2.filter(c=>c.stage==="meta"); },
+    derive(doc){
+      const a = doc.querySelector("#screenport .screen.is-active");
+      if(!a) return "login";
+      const id = a.id.replace("screen-","");
+      return id==="sent" ? "invoice" : id;
+    },
+    nav(name){ const w = frameWin("v2"); if(w && typeof w.go==="function") w.go(name); },
+  },
+};
+
+/* ---------- state ---------- */
+const FLAG_KEY = "beat_social_flags";
+const VER_KEY  = "beat_social_version";
+const DEFAULT_FLAGS = { client:false, flow:true, ux:true, growth:true, strategy:true };
+let flags = loadFlags();
+let currentVersion = loadVersion();
+let currentStage = null;
+const framesReady = { v2:false, v4:false };
+
+/* ---------- helpers ---------- */
+const $  = (s,r=document)=>r.querySelector(s);
+const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
+function frameEl(v){ return $("#"+VDATA[v].frameId); }
+function frameDoc(v){ try{ return frameEl(v).contentDocument; }catch(e){ return null; } }
+function frameWin(v){ try{ return frameEl(v).contentWindow; }catch(e){ return null; } }
+
+function loadFlags(){ try{ return {...DEFAULT_FLAGS, ...(JSON.parse(localStorage.getItem(FLAG_KEY))||{})}; }catch(e){ return {...DEFAULT_FLAGS}; } }
+function saveFlags(){ try{ localStorage.setItem(FLAG_KEY, JSON.stringify(flags)); }catch(e){} }
+function loadVersion(){ const v = (function(){ try{ return localStorage.getItem(VER_KEY); }catch(e){ return null; } })(); return (v==="v2"||v==="v4") ? v : "v4"; }
+function saveVersion(){ try{ localStorage.setItem(VER_KEY, currentVersion); }catch(e){} }
+
+/* ---------- iframe chrome injection ---------- */
+const FRAME_CSS = `
+  html,body{ background:transparent !important; margin:0 !important; }
+  .caption{ display:none !important; }
+  .flowrail,.notes,aside.notes{ display:none !important; }
+  .workspace{ padding:6px 0 0 0 !important; min-height:0 !important; gap:0 !important; justify-content:center !important; }
+  .phone-wrap{ gap:0 !important; }
+  .phone-hint{ display:none !important; }
+`;
+function injectFrameCSS(v){
+  const doc = frameDoc(v); if(!doc || !doc.head) return;
+  if(doc.getElementById("__shell_css__")) return;
+  const st = doc.createElement("style");
+  st.id = "__shell_css__"; st.textContent = FRAME_CSS;
+  doc.head.appendChild(st);
+}
+
+/* ---------- observe the iframe DOM to derive stage live ---------- */
+function observeFrame(v){
+  const doc = frameDoc(v); if(!doc) return;
+  const root = doc.querySelector(".phone") || doc.body;
+  try{
+    const obs = new MutationObserver(()=>{ if(v===currentVersion) syncStageFromFrame(); });
+    obs.observe(root, { subtree:true, attributes:true, attributeFilter:["class"] });
+  }catch(e){}
+}
+function syncStageFromFrame(){
+  const doc = frameDoc(currentVersion);
+  let stage;
+  if(doc){ try{ stage = VDATA[currentVersion].derive(doc); }catch(e){ stage = VDATA[currentVersion].steps[0].key; } }
+  else { stage = VDATA[currentVersion].steps[0].key; }
+  setStage(stage);
+}
+
+function onFrameLoad(v){
+  framesReady[v] = true;
+  injectFrameCSS(v);
+  observeFrame(v);
+  if(v===currentVersion) syncStageFromFrame();
+}
+
+/* ---------- rep-flow rail ---------- */
+function renderRail(){
+  const cfg = VDATA[currentVersion];
+  $("#flowsteps").innerHTML = cfg.steps.map((s,i)=>`
+    <button class="flowstep${cfg.clickableRail?" clickable":""}" data-key="${s.key}" ${cfg.clickableRail?"":"tabindex=\"-1\""}>
+      <div class="fnum">${i+1}</div>
+      <div><div class="flbl">${s.n}</div><div class="fsub">${s.s}</div></div>
+    </button>`).join("");
+  if(cfg.clickableRail && cfg.nav){
+    $$("#flowsteps .flowstep").forEach(el=>{
+      el.addEventListener("click", ()=> cfg.nav(el.dataset.key));
+    });
+  }
+}
+function highlightRail(stageKey){
+  const cfg = VDATA[currentVersion];
+  const idx = cfg.steps.findIndex(s=>s.key===stageKey);
+  $$("#flowsteps .flowstep").forEach((el,i)=>{
+    el.classList.toggle("active", i===idx);
+    el.classList.toggle("done", i<idx);
+  });
+  return idx;
+}
+
+/* ---------- stage → rails + commentary ---------- */
+function setStage(stage){
+  const cfg = VDATA[currentVersion];
+  if(!cfg.stageLabel[stage]) stage = cfg.steps[0].key;
+  currentStage = stage;
+  const idx = highlightRail(stage);
+  $("#siLabel").textContent = cfg.stageLabel[stage] || "—";
+  $("#siStep").textContent = (idx>=0?idx+1:1) + " / " + cfg.steps.length;
+  if(cfg.costMeter) updateCostMeter(cfg.tapByStage[stage] ?? 0);
+  renderCommentary();
+}
+
+function lensOn(lens){ return !flags.client && flags[lens]; }
+function cardHTML(c){
+  return `<div class="ccard lens-${c.lens}">
+    <div class="cc-top"><span class="cc-lens">${(LENS[c.lens]||{label:c.lens}).label}</span>
+      ${c.metric ? `<span class="cc-metric">${c.metric}</span>` : ""}</div>
+    <h4>${c.title}</h4><p>${c.body}</p>
+    ${c.principle ? `<span class="cc-principle">${c.principle}</span>` : ""}
+  </div>`;
+}
+function renderCommentary(){
+  const cfg = VDATA[currentVersion];
+  const host = $("#cardHost"), thesisHost = $("#thesisHost");
+  const anyLens = flags.ux || flags.growth || flags.strategy;
+
+  $("#costMeter").style.display = (!flags.client && cfg.costMeter) ? "block" : "none";
+
+  if(flags.client){ host.innerHTML=""; thesisHost.innerHTML=""; $("#thesis").style.display="none"; return; }
+
+  const cards = (cfg.cardsForStage(currentStage)||[]).filter(c=>lensOn(c.lens));
+  host.innerHTML = cards.length
+    ? cards.map(cardHTML).join("")
+    : `<div class="cc-empty">${anyLens ? "No cards from the active layers on this step — move through the flow." : "All layers are off. Flip one on in ⚙️ Settings."}</div>`;
+
+  const meta = (cfg.metaCards()||[]).filter(c=>lensOn(c.lens));
+  $("#thesis").style.display = meta.length ? "block" : "none";
+  thesisHost.innerHTML = meta.map(cardHTML).join("");
+}
+
+/* ---------- interaction-cost meter (v4) ---------- */
+const V3_BASELINE = 25;
+function updateCostMeter(taps){
+  $("#cmTaps").textContent = taps;
+  $("#cmFill").style.width = Math.max(6, Math.round((taps/V3_BASELINE)*100)) + "%";
+  if(taps>=3){
+    $("#cmDrop").textContent = `↓ ${Math.round((1-taps/V3_BASELINE)*100)}% fewer taps than v3 — priced order in ${taps}`;
+  } else if(taps>0){
+    $("#cmDrop").textContent = `${3-taps} more tap${3-taps===1?"":"s"} to a fully priced order`;
+  } else {
+    $("#cmDrop").textContent = "Start an order to watch the cost drop →";
+  }
+}
+
+/* ---------- version switch ---------- */
+function setVersion(v){
+  if(!VDATA[v]) return;
+  currentVersion = v;
+  saveVersion();
+  $$("#vswitch button").forEach(b=> b.classList.toggle("on", b.dataset.ver===v));
+  $$(".phone-host iframe").forEach(f=> f.classList.remove("show"));
+  frameEl(v).classList.add("show");
+  $("#phoneHint").textContent = VDATA[v].hint;
+  renderRail();
+  syncStageFromFrame();
+}
+
+/* ---------- settings / flags ---------- */
+function setSwitch(sel,on){ const el=$(sel); if(!el) return; el.classList.toggle("on",on); el.setAttribute("aria-checked", on?"true":"false"); }
+function applyFlags(){
+  document.body.classList.toggle("client-mode", flags.client);
+  document.body.classList.toggle("flow-on", flags.flow);
+  setSwitch("#swClient",flags.client); setSwitch("#swFlow",flags.flow);
+  setSwitch("#swUx",flags.ux); setSwitch("#swGrowth",flags.growth); setSwitch("#swStrategy",flags.strategy);
+  $("#layerGroup").classList.toggle("locked", flags.client);
+  $("#lockMsg").classList.toggle("show", flags.client);
+  $("#gearBtn").classList.toggle("live", flags.client);
+  renderCommentary();
+  saveFlags();
+}
+
+/* ---------- settings popover ---------- */
+const gearBtn=$("#gearBtn"), settings=$("#settings");
+function toggleSettings(open){ const willOpen = open ?? !settings.classList.contains("open");
+  settings.classList.toggle("open", willOpen); gearBtn.setAttribute("aria-expanded", willOpen?"true":"false"); }
+gearBtn.addEventListener("click", e=>{ e.stopPropagation(); toggleSettings(); });
+document.addEventListener("click", e=>{ if(settings.classList.contains("open") && !settings.contains(e.target) && e.target!==gearBtn) toggleSettings(false); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") toggleSettings(false); });
+function bindSwitch(sel,key){ $(sel).addEventListener("click", ()=>{ flags[key]=!flags[key]; applyFlags(); }); }
+bindSwitch("#swClient","client"); bindSwitch("#swFlow","flow");
+bindSwitch("#swUx","ux"); bindSwitch("#swGrowth","growth"); bindSwitch("#swStrategy","strategy");
+
+/* version switcher */
+$$("#vswitch button").forEach(b=> b.addEventListener("click", ()=> setVersion(b.dataset.ver)));
+
+/* ---------- iframe load wiring (handle already-cached loads too) ---------- */
+["v2","v4"].forEach(v=>{
+  const f = frameEl(v);
+  f.addEventListener("load", ()=> onFrameLoad(v));
+  try{ if(f.contentDocument && f.contentDocument.readyState==="complete") onFrameLoad(v); }catch(e){}
+});
+
+/* ---------- init ---------- */
+applyFlags();
+setVersion(currentVersion);
+</script>
+</body>
+</html>
