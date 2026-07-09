@@ -1,0 +1,21 @@
+# Belt-and-suspenders: never allow confidential Beat materials into this repo.
+# (They live OUTSIDE this folder, but guard against accidental copies.)
+*.m4a
+*.mp4
+*.wav
+*.vtt
+*.srt
+*.tsv
+*.json
+recording.conf
+recordings/
+transcript/
+transcripts/
+../docs/
+../research/
+../recordings/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp

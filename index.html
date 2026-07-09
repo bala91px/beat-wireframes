@@ -1,0 +1,114 @@
+<!-- © 2026 91Pixels. All Rights Reserved. Confidential client wireframe — not for redistribution. -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="copyright" content="© 2026 91Pixels. All Rights Reserved.">
+<meta name="author" content="91Pixels">
+<meta name="robots" content="noindex, nofollow">
+<title>Beat · Rep App — Wireframe Preview · 91Pixels</title>
+<style>
+  :root{
+    --bg:#0b0e13; --bg-2:#10141b; --card:#141922; --card-h:#19202b;
+    --ink:#f3f5f8; --ink-2:#aab1bd; --ink-3:#6f7784;
+    --line:#232a34; --line-2:#2e3742; --accent:#e7eaef;
+    --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:var(--font); color:var(--ink); min-height:100vh;
+    background:radial-gradient(1100px 620px at 50% -12%, #16202e 0%, var(--bg) 62%);
+    -webkit-font-smoothing:antialiased;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .wrap{ width:100%; max-width:920px; padding:0 24px; }
+
+  header{ padding:64px 0 34px; }
+  .brand{ display:flex; align-items:center; gap:11px; }
+  .dot{ width:11px; height:11px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 4px rgba(231,234,239,.08); }
+  .brand .kicker{ font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:600; }
+  h1{ font-size:44px; line-height:1.05; letter-spacing:-.02em; margin:22px 0 0;
+    font-weight:300; }
+  h1 b{ font-weight:680; }
+  .lede{ font-size:15.5px; line-height:1.65; color:var(--ink-2); margin:16px 0 0; max-width:560px; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
+  .pill{ font-size:11.5px; color:var(--ink-2); border:1px solid var(--line-2);
+    padding:5px 11px; border-radius:20px; background:rgba(255,255,255,.02); }
+
+  .cards{ display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:8px 0 40px; }
+  @media (max-width:640px){ .cards{ grid-template-columns:1fr; } h1{ font-size:34px; } header{ padding:44px 0 26px; } }
+
+  .card{ display:flex; flex-direction:column; text-decoration:none; color:inherit;
+    background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:24px 22px 22px; transition:border-color .18s, background .18s, transform .18s;
+    position:relative; overflow:hidden; }
+  .card:hover{ border-color:var(--line-2); background:var(--card-h); transform:translateY(-2px); }
+  .card .vtag{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-3); }
+  .card .vname{ font-size:20px; font-weight:640; margin:9px 0 0; letter-spacing:-.01em; }
+  .card .vsub{ font-size:12.5px; color:var(--ink-3); margin:3px 0 0; font-family:var(--mono); }
+  .card .vdesc{ font-size:13.5px; line-height:1.6; color:var(--ink-2); margin:15px 0 0; flex:1; }
+  .card .go{ display:inline-flex; align-items:center; gap:8px; margin-top:20px;
+    font-size:13px; font-weight:600; color:var(--ink); }
+  .card .go .arr{ transition:transform .18s; }
+  .card:hover .go .arr{ transform:translateX(4px); }
+  .card .num{ position:absolute; top:16px; right:20px; font-size:52px; font-weight:700;
+    color:rgba(255,255,255,.04); font-family:var(--mono); line-height:1; }
+
+  footer{ width:100%; border-top:1px solid var(--line); margin-top:auto; }
+  .foot-in{ max-width:920px; margin:0 auto; padding:22px 24px 30px;
+    display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center;
+    font-size:12px; color:var(--ink-3); }
+  .foot-in .sep{ color:var(--line-2); }
+  .foot-in b{ color:var(--ink-2); font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand"><span class="dot"></span><span class="kicker">91Pixels · Client Preview</span></div>
+      <h1><b>Beat</b> — Field Sales Rep App</h1>
+      <p class="lede">Clickable wireframes for the mobile rep ordering flow. Two directions to review, side by side. Open either on a phone or desktop — every screen is interactive.</p>
+      <div class="meta-row">
+        <span class="pill">🇿🇦 South Africa market</span>
+        <span class="pill">Mobile-first</span>
+        <span class="pill">Interactive prototype</span>
+        <span class="pill">Confidential</span>
+      </div>
+    </header>
+
+    <div class="cards">
+      <a class="card" href="v1.html">
+        <span class="num">01</span>
+        <span class="vtag">Version 1</span>
+        <div class="vname">Catalog · Weight · Discounts</div>
+        <div class="vsub">browse &amp; build</div>
+        <p class="vdesc">The fuller catalog flow. Category navigator with search, fast-moving flags and regional availability; loud bulk discounts; package sizing with live order weight and load class; a persistent cart that follows you as you add.</p>
+        <span class="go">Open Version 1 <span class="arr">→</span></span>
+      </a>
+
+      <a class="card" href="v2.html">
+        <span class="num">02</span>
+        <span class="vtag">Version 2</span>
+        <div class="vname">Full-page Quick Add</div>
+        <div class="vsub">one product at a time</div>
+        <p class="vdesc">The streamlined direction. A reels-style hero feed — one product per screen — that opens into a single scrolling page: pick container → pick quantity (quick chips + custom) → order summary, auto-scrolling you from step to step.</p>
+        <span class="go">Open Version 2 <span class="arr">→</span></span>
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-in">
+      <span>© 2026 <b>91Pixels</b>. All rights reserved.</span>
+      <span class="sep">·</span>
+      <span>Confidential — shared for review only, not for redistribution.</span>
+    </div>
+  </footer>
+</body>
+</html>
