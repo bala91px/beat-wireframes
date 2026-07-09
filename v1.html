@@ -59,7 +59,8 @@
     padding:30px 22px 60px; max-width:1180px; margin:0 auto; }
 
   /* flow rail */
-  .flowrail{ width:186px; flex-shrink:0; padding-top:14px; }
+  .flowrail{ width:186px; flex-shrink:0; padding-top:14px; display:none; }
+  body.flow-on .flowrail{ display:block; }
   .flowrail .rail-title{ font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
     color:var(--ink-3); margin:0 0 12px 6px; font-weight:650; }
   .step{ display:flex; gap:11px; align-items:flex-start; padding:9px 10px; border-radius:10px;
@@ -411,7 +412,7 @@
 
   @media (max-width:1080px){
     .workspace{ flex-wrap:wrap; }
-    .flowrail{ width:100%; display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; order:2; }
+    body.flow-on .flowrail{ width:100%; display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; order:2; }
     .flowrail .rail-title{ display:none; }
     .flowrail .step:not(:last-child)::before{ display:none; }
     .step{ flex-shrink:0; flex-direction:column; align-items:center; text-align:center; width:82px; }
@@ -423,7 +424,7 @@
   }
 </style>
 </head>
-<body class="notes-on">
+<body>
 
   <div class="caption">
     <div class="brand"><span class="dot"></span><h1>Beat · Field Rep App</h1></div>
@@ -432,7 +433,8 @@
     <span class="tag">© 91Pixels · All rights reserved</span>
     <div class="spacer"></div>
     <span class="region-pill">📍 <b id="capRegion">—</b></span>
-    <button class="ctrl on" id="toggleNotes">🗒 Design notes</button>
+    <button class="ctrl" id="toggleFlow">🧭 Rep flow</button>
+    <button class="ctrl" id="toggleNotes">🗒 Design notes</button>
     <button class="ctrl" id="restart">↻ Restart</button>
   </div>
 
@@ -1087,6 +1089,7 @@ function renderNotes(name){ const arr=NOTES[name]||[]; $("#noteBody").innerHTML=
   <div class="notecard"><h4><span class="n">${i+1}</span>${n.t}</h4><p>${n.b}</p>${n.pain?`<div class="pain">🩹 ${n.pain}</div>`:''}</div>`).join(""); }
 
 /* controls */
+$("#toggleFlow").addEventListener("click",e=>{ document.body.classList.toggle("flow-on"); e.currentTarget.classList.toggle("on",document.body.classList.contains("flow-on")); });
 $("#toggleNotes").addEventListener("click",e=>{ document.body.classList.toggle("notes-on"); e.currentTarget.classList.toggle("on",document.body.classList.contains("notes-on")); });
 $("#restart").addEventListener("click",()=>{ state={ store:STORES[0], cat:"all", sub:null, search:"", filters:{zone:"All",sort:"fast",sellableOnly:true}, product:PRODUCTS[0], pack:1, qty:1, cart:[] }; $("#searchInput").value=""; setStoreCtx(); markFiltered(); syncBadges(); go("login"); });
 
