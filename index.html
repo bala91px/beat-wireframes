@@ -7,12 +7,26 @@
 <meta name="copyright" content="© 2026 91Pixels. All Rights Reserved.">
 <meta name="author" content="91Pixels">
 <meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0e0c12">
 <title>Beat · Rep App — Wireframe Preview · 91Pixels</title>
 <style>
+  @font-face{
+    font-family:"Clash Display";
+    src:url("fonts/ClashDisplay-Variable.woff2") format("woff2-variations"),
+        url("fonts/ClashDisplay-Variable.woff2") format("woff2");
+    font-weight:200 700; font-style:normal; font-display:swap;
+  }
   :root{
-    --bg:#0b0e13; --bg-2:#10141b; --card:#141922; --card-h:#19202b;
-    --ink:#f3f5f8; --ink-2:#aab1bd; --ink-3:#6f7784;
-    --line:#232a34; --line-2:#2e3742; --accent:#e7eaef;
+    /* 91Pixels brand — near-black base, champagne-gold accent, purple→pink signature gradient */
+    --bg:#0e0c12; --bg-2:#12101a; --card:#16131d; --card-h:#1c1826;
+    --ink:#f4f2f7; --ink-2:#b6aec2; --ink-3:#8b8498;
+    --line:#241f30; --line-2:#332c42; --accent:#d4ac85;
+    --gold:#d4ac85; --gold-hi:#e4c6a6; --gold-2:#a6722d; --cream:#fde0a9;
+    --violet:#8c00ff; --violet-2:#9a26ff; --pink:#ff57c7; --pink-2:#ff52a3;
+    --grad-brand:linear-gradient(103deg,#a24bff 0%,#ff57c7 56%,#ff77b4 100%);
+    --grad-gold:linear-gradient(120deg,#fde0a9 0%,#d4ac85 46%,#a6722d 100%);
+    --ease-out:cubic-bezier(.22,1,.36,1); /* ease-out-expo-ish */
+    --display:"Clash Display",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
     --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --mono:"SFMono-Regular",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
   }
@@ -20,58 +34,86 @@
   html,body{ margin:0; padding:0; }
   body{
     font-family:var(--font); color:var(--ink); min-height:100vh;
-    background:radial-gradient(1100px 620px at 50% -12%, #16202e 0%, var(--bg) 62%);
+    background:
+      radial-gradient(760px 440px at 82% -6%, rgba(140,0,255,.20) 0%, transparent 58%),
+      radial-gradient(720px 460px at 12% 2%, rgba(255,87,199,.10) 0%, transparent 55%),
+      radial-gradient(1200px 700px at 48% -12%, #1a1526 0%, var(--bg) 64%);
+    background-attachment:fixed;
     -webkit-font-smoothing:antialiased;
     display:flex; flex-direction:column; align-items:center;
   }
   .wrap{ width:100%; max-width:920px; padding:0 24px; }
 
   header{ padding:64px 0 34px; }
-  .brand{ display:flex; align-items:center; gap:11px; }
-  .dot{ width:11px; height:11px; border-radius:50%; background:var(--accent);
-    box-shadow:0 0 0 4px rgba(231,234,239,.08); }
+  .brand{ display:flex; align-items:center; gap:9px; }
+  .dot{ width:11px; height:11px; border-radius:50%; background:var(--grad-gold);
+    box-shadow:0 0 0 4px rgba(212,172,133,.10), 0 0 14px rgba(212,172,133,.45); }
+  .brand .wordmark{ font-family:var(--display); font-weight:600; font-size:14.5px; letter-spacing:.01em; color:var(--gold-hi); }
+  .brand .kdiv{ color:var(--line-2); font-size:12px; }
   .brand .kicker{ font-size:12px; letter-spacing:.16em; text-transform:uppercase;
     color:var(--ink-3); font-weight:600; }
-  h1{ font-size:44px; line-height:1.05; letter-spacing:-.02em; margin:22px 0 0;
-    font-weight:300; }
-  h1 b{ font-weight:680; }
-  .lede{ font-size:15.5px; line-height:1.65; color:var(--ink-2); margin:16px 0 0; max-width:560px; }
+  h1{ font-family:var(--display); font-size:clamp(33px,6.2vw,48px); line-height:1.04; letter-spacing:-.022em;
+    margin:22px 0 0; font-weight:400; text-wrap:balance; }
+  h1 b{ font-weight:600; background:var(--grad-brand); -webkit-background-clip:text;
+    background-clip:text; color:transparent; }
+  .lede{ font-size:15.5px; line-height:1.65; color:var(--ink-2); margin:16px 0 0; max-width:54ch; text-wrap:pretty; }
   .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:22px; }
   .pill{ font-size:11.5px; color:var(--ink-2); border:1px solid var(--line-2);
     padding:5px 11px; border-radius:20px; background:rgba(255,255,255,.02); }
 
   .cards{ display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:8px 0 40px; }
-  @media (max-width:640px){ .cards{ grid-template-columns:1fr; } h1{ font-size:34px; } header{ padding:44px 0 26px; } }
+  @media (max-width:640px){ .cards{ grid-template-columns:1fr; } header{ padding:44px 0 26px; } }
 
   .card{ display:flex; flex-direction:column; text-decoration:none; color:inherit;
     background:var(--card); border:1px solid var(--line); border-radius:16px;
-    padding:24px 22px 22px; transition:border-color .18s, background .18s, transform .18s;
+    padding:24px 22px 22px; transition:border-color .28s var(--ease-out), background .28s var(--ease-out),
+    transform .28s var(--ease-out), box-shadow .28s var(--ease-out);
     position:relative; overflow:hidden; }
-  .card:hover{ border-color:var(--line-2); background:var(--card-h); transform:translateY(-2px); }
+  .card::before{ content:""; position:absolute; top:0; left:0; right:0; height:2px;
+    background:var(--grad-brand); opacity:0; transition:opacity .28s var(--ease-out); }
+  .card:hover::before{ opacity:.95; }
+  .card:hover{ border-color:rgba(212,172,133,.5); background:var(--card-h); transform:translateY(-3px);
+    box-shadow:0 22px 48px -26px rgba(140,0,255,.45); }
+  .card:focus-visible{ outline:2px solid var(--gold); outline-offset:3px;
+    border-color:rgba(212,172,133,.55); }
+  .card:active{ transform:translateY(-1px); transition-duration:.06s; }
   .card .vtag{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-    color:var(--ink-3); }
-  .card .vname{ font-size:20px; font-weight:640; margin:9px 0 0; letter-spacing:-.01em; }
+    color:var(--gold); }
+  .card .vname{ font-family:var(--display); font-size:21px; font-weight:560; margin:9px 0 0; letter-spacing:-.01em; }
   .card .vsub{ font-size:12.5px; color:var(--ink-3); margin:3px 0 0; font-family:var(--mono); }
-  .card .vdesc{ font-size:13.5px; line-height:1.6; color:var(--ink-2); margin:15px 0 0; flex:1; }
+  .card .vdesc{ font-size:13.5px; line-height:1.62; color:var(--ink-2); margin:15px 0 0; flex:1; text-wrap:pretty; }
   .card .go{ display:inline-flex; align-items:center; gap:8px; margin-top:20px;
     font-size:13px; font-weight:600; color:var(--ink); }
   .card .go .arr{ transition:transform .18s; }
   .card:hover .go .arr{ transform:translateX(4px); }
+  .card:hover .go{ color:var(--gold); }
   .card .num{ position:absolute; top:16px; right:20px; font-size:52px; font-weight:700;
-    color:rgba(255,255,255,.04); font-family:var(--mono); line-height:1; }
+    font-family:var(--mono); line-height:1; color:var(--gold); opacity:.13; }
 
   footer{ width:100%; border-top:1px solid var(--line); margin-top:auto; }
   .foot-in{ max-width:920px; margin:0 auto; padding:22px 24px 30px;
     display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center;
     font-size:12px; color:var(--ink-3); }
   .foot-in .sep{ color:var(--line-2); }
-  .foot-in b{ color:var(--ink-2); font-weight:600; }
+  .foot-in b{ color:var(--gold); font-weight:600; }
+
+  /* Entrance — staggered rise. `backwards` fill holds the pre-state during the
+     delay, then hands control back to base styles so hover transforms stay free. */
+  @keyframes rise{ from{ opacity:0; transform:translateY(11px); } to{ opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: no-preference){
+    .brand{ animation:rise .7s var(--ease-out) backwards; }
+    h1{ animation:rise .7s var(--ease-out) .06s backwards; }
+    .lede{ animation:rise .7s var(--ease-out) .12s backwards; }
+    .meta-row{ animation:rise .7s var(--ease-out) .18s backwards; }
+    .cards .card:nth-child(1){ animation:rise .7s var(--ease-out) .26s backwards; }
+    .cards .card:nth-child(2){ animation:rise .7s var(--ease-out) .34s backwards; }
+  }
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="brand"><span class="dot"></span><span class="kicker">91Pixels · Client Preview</span></div>
+      <div class="brand"><span class="dot"></span><span class="wordmark">91Pixels</span><span class="kdiv">·</span><span class="kicker">Client Preview</span></div>
       <h1><b>Beat</b> — Field Sales Rep App</h1>
       <p class="lede">Clickable wireframes for the mobile rep ordering flow. Two directions to review, side by side. Open either on a phone or desktop — every screen is interactive.</p>
       <div class="meta-row">
@@ -83,8 +125,8 @@
     </header>
 
     <div class="cards">
-      <a class="card" href="v1.html">
-        <span class="num">01</span>
+      <a class="card" href="v1.html" aria-label="Open Version 1 — Catalog, Weight, Discounts">
+        <span class="num" aria-hidden="true">01</span>
         <span class="vtag">Version 1</span>
         <div class="vname">Catalog · Weight · Discounts</div>
         <div class="vsub">browse &amp; build</div>
@@ -92,8 +134,8 @@
         <span class="go">Open Version 1 <span class="arr">→</span></span>
       </a>
 
-      <a class="card" href="v2.html">
-        <span class="num">02</span>
+      <a class="card" href="v2.html" aria-label="Open Version 2 — Full-page Quick Add">
+        <span class="num" aria-hidden="true">02</span>
         <span class="vtag">Version 2</span>
         <div class="vname">Full-page Quick Add</div>
         <div class="vsub">one product at a time</div>
