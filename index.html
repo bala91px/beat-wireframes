@@ -63,6 +63,7 @@
     padding:5px 11px; border-radius:20px; background:rgba(255,255,255,.02); }
 
   .cards{ display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:8px 0 40px; }
+  .cards.docs{ grid-template-columns:1fr; }
   @media (max-width:640px){ .cards{ grid-template-columns:1fr; } header{ padding:44px 0 26px; } }
 
   .card{ display:flex; flex-direction:column; text-decoration:none; color:inherit;
@@ -142,6 +143,17 @@
         <div class="vsub">one product at a time</div>
         <p class="vdesc">The streamlined direction. A reels-style hero feed — one product per screen — that opens into a single scrolling page: pick container → pick quantity (quick chips + custom) → order summary, auto-scrolling you from step to step.</p>
         <span class="go">Open Version 2 <span class="arr">→</span></span>
+      </a>
+    </div>
+
+    <div class="cards docs">
+      <a class="card" href="prd.html" aria-label="Open the Product Requirements Document">
+        <span class="num" aria-hidden="true">PRD</span>
+        <span class="vtag">Product Requirements</span>
+        <div class="vname">Beat — PRD v1</div>
+        <div class="vsub">for the full-stack developer</div>
+        <p class="vdesc">High-level build spec: platform &amp; stack decision, actors, rep-app &amp; admin feature specs, data model, pricing engine rules, non-functional requirements, and what's out of scope for MVP.</p>
+        <span class="go">Open the PRD <span class="arr">→</span></span>
       </a>
     </div>
   </div>
