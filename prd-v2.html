@@ -1,0 +1,547 @@
+<!-- © 2026 91Pixels. All Rights Reserved. Confidential client PRD (v2) — not for redistribution. -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="copyright" content="© 2026 91Pixels. All Rights Reserved.">
+<meta name="author" content="91Pixels">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="assets/91pixels-badge.png">
+<link rel="apple-touch-icon" href="assets/91pixels-badge.png">
+<title>Beat — Product Requirements (v2) · 91Pixels</title>
+<style>
+  :root{
+    --ink:#0c1017; --ink-2:#1a222e;
+    --paper:#ffffff; --paper-2:#f6f7f9;
+    --line:#e4e7ec; --line-2:#d3d8e0;
+    --muted:#5a6472; --muted-2:#8a94a3;
+    --gold:#c8a24b; --gold-deep:#a9842f;
+    --green:#2f8f5b; --green-bg:#eaf6ef;
+    --blue:#3a6ea5; --blue-bg:#eef3f9;
+    --amber:#9a6b12; --amber-bg:#f7efdc;
+    --radius:14px; --stage:1000px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--paper-2);line-height:1.55;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:var(--stage);margin:0 auto;padding:0 24px}
+  h1,h2,h3,h4{margin:0;font-weight:680;letter-spacing:-.01em;line-height:1.18}
+  p{margin:0}
+  a{color:var(--gold-deep);text-decoration:none}
+  code,.mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:.9em}
+
+  header.hero{background:radial-gradient(120% 140% at 85% -10%, #17202c 0%, var(--ink) 55%);color:#eef2f7;padding:40px 0 34px;border-bottom:3px solid var(--gold)}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  header.hero h1{font-size:clamp(28px,4.6vw,44px);margin:12px 0 8px;color:#fff}
+  header.hero .sub{color:#aeb8c6;font-size:15.5px;max-width:66ch}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px 10px;margin-top:20px}
+  .chip{font-size:12px;padding:5px 11px;border:1px solid #33404f;border-radius:999px;color:#cfd8e3;background:#141c26}
+  .chip.warn{border-color:#6b5320;color:#e9cd85;background:#1c1810}
+  .chip.ok{border-color:#2f6b46;color:#8fd6ab;background:#12211a}
+
+  nav.toc{background:var(--paper);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5;padding:10px 0}
+  nav.toc .wrap{display:flex;flex-wrap:wrap;gap:4px 6px}
+  nav.toc a{font-size:12px;color:var(--muted);padding:5px 10px;border-radius:7px;border:1px solid transparent}
+  nav.toc a:hover{background:var(--paper-2);border-color:var(--line);color:var(--ink)}
+
+  section{padding:38px 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:0}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px}
+  .sec-head .n{font-size:12px;font-weight:800;color:var(--gold-deep);letter-spacing:.12em}
+  .sec-head h2{font-size:clamp(20px,2.6vw,26px)}
+  .lede{color:var(--muted);max-width:78ch;margin-bottom:16px;font-size:15px}
+
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px}
+  .card h3{font-size:16px;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .card .desc{color:var(--muted);font-size:13.5px;margin-bottom:12px}
+  .cols{display:grid;gap:16px}
+  .cols.two{grid-template-columns:1fr 1fr}
+  .cols.three{grid-template-columns:repeat(3,1fr)}
+
+  ul.reqs{list-style:none;margin:0;padding:0}
+  ul.reqs li{padding:9px 0;border-top:1px solid var(--line);font-size:14px;color:#2b3542;display:flex;gap:10px;align-items:flex-start}
+  ul.reqs li:first-child{border-top:0}
+  ul.reqs li b{color:var(--ink);font-weight:640}
+  .rid{font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:11px;color:var(--muted-2);min-width:52px;padding-top:2px;font-weight:600}
+
+  .pill{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap;letter-spacing:.02em}
+  .pill.mvp{background:var(--green-bg);color:var(--green)}
+  .pill.p2{background:var(--blue-bg);color:var(--blue)}
+  .pill.assume{background:var(--amber-bg);color:var(--amber)}
+
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 4px}
+  .flow .step{background:var(--paper-2);border:1px solid var(--line-2);border-radius:8px;padding:6px 11px;font-size:12.5px;font-weight:600}
+  .flow .arr{color:var(--gold-deep);font-weight:700}
+
+  .phase-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .phase{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  .phase .pn{font-size:22px;font-weight:800;color:var(--gold-deep);line-height:1}
+  .phase .pk{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin:8px 0 4px}
+  .phase h4{font-size:15px;margin-bottom:5px}
+  .phase p{font-size:12.5px;color:var(--muted)}
+
+  table.tbl{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table.tbl th,table.tbl td{text-align:left;padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+  table.tbl thead th{border-top:0;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted-2);font-weight:700;background:var(--paper-2)}
+  table.tbl td b{font-weight:660}
+  table.tbl .ent{white-space:nowrap;font-weight:700}
+
+  .datablock{background:#0f1520;color:#d6e0ec;border-radius:12px;padding:16px 18px;font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:12.5px;line-height:1.7;overflow-x:auto}
+  .datablock .k{color:#7fd1a3}
+  .datablock .c{color:#7f8ea3}
+  .datablock .t{color:#e0b862}
+
+  .callout{border-left:3px solid var(--gold);background:#fbf7ec;padding:14px 16px;border-radius:0 10px 10px 0;font-size:14px;color:#3a3320;margin:6px 0 2px}
+  .callout.blue{border-color:var(--blue);background:var(--blue-bg);color:#26364a}
+  .callout.amber{border-color:var(--amber);background:var(--amber-bg);color:#5c4410}
+  .callout.green{border-color:var(--green);background:var(--green-bg);color:#1f4d33}
+  .callout b{font-weight:700}
+
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:6px 16px;font-size:14px}
+  .kv dt{color:var(--muted);font-weight:600}
+  .kv dd{margin:0;color:#2b3542}
+  .kv dd b{color:var(--ink)}
+
+  footer{background:var(--ink);color:#8a94a3;padding:26px 0;font-size:12px;text-align:center;border-top:3px solid var(--gold)}
+  footer b{color:#c7d0db}
+
+  @media(max-width:800px){
+    .cols.two,.cols.three,.phase-grid{grid-template-columns:1fr}
+    .kv{grid-template-columns:1fr}
+    nav.toc{position:static}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">91Pixels · Product Requirements Document · v2 · aligned to the frozen proposal</div>
+    <h1>Beat — Field Sales Pitch &amp; Order App</h1>
+    <p class="sub">A tablet-first tool for FMCG field reps to run a brand-controlled product pitch, capture an order with negotiated pricing, and issue a Tally-style invoice — backed by a web admin that controls the catalog, pricing and content. This v2 PRD is scoped to match the committed MVP proposal: a disciplined first release with a clear Phase-2 roadmap.</p>
+    <div class="meta-row">
+      <span class="chip">Prepared by: Blake / 91Pixels</span>
+      <span class="chip">14 Jul 2026 · v2 · post-proposal</span>
+      <span class="chip">Audience: Full-stack developer</span>
+      <span class="chip ok">MVP: English UI · single region</span>
+      <span class="chip warn">Invoice output: Metical (MTn) + Portuguese amount-in-words</span>
+    </div>
+    <p style="margin-top:18px"><a href="index.html" style="color:#e9cd85;font-size:13px">← Back to wireframe preview</a> &nbsp;·&nbsp; <a href="prd.html" style="color:#8a94a3;font-size:13px">v1 PRD (pre-discovery, superseded)</a></p>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#overview">1 · Overview</a>
+    <a href="#delivery">2 · Scope &amp; delivery</a>
+    <a href="#principles">3 · Goals</a>
+    <a href="#arch">4 · Platform &amp; Stack</a>
+    <a href="#actors">5 · Actors</a>
+    <a href="#rep">6 · Rep App</a>
+    <a href="#admin">7 · Admin Portal</a>
+    <a href="#data">8 · Data Model</a>
+    <a href="#pricing">9 · Pricing Engine</a>
+    <a href="#nfr">10 · Non-Functional</a>
+    <a href="#scope">11 · Out of Scope</a>
+    <a href="#open">12 · Open Questions</a>
+  </div>
+</nav>
+
+<!-- 1 OVERVIEW -->
+<section id="overview">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">01</span><h2>Product overview</h2></div>
+    <p class="lede">The client is an FMCG manufacturer (factory in South Africa) selling an umbrella of own-manufactured brands into the Mozambique market through <b>~100+ field sales reps</b> across regions, carrying <b>~1,000 SKUs</b>. Beat digitises how a rep pitches products and captures orders at the counter — <b>without</b> changing how their team already works. The thing the client is buying is <b>control</b>: every rep sells the way the brand decides, and every price holds.</p>
+    <div class="card">
+      <h3>The core loop</h3>
+      <div class="flow">
+        <span class="step">Rep logs in</span><span class="arr">→</span>
+        <span class="step">Today's Beat (tasks)</span><span class="arr">→</span>
+        <span class="step">Open a catalog</span><span class="arr">→</span>
+        <span class="step">Pitch products in order</span><span class="arr">→</span>
+        <span class="step">Set qty + price</span><span class="arr">→</span>
+        <span class="step">Mandatory ad</span><span class="arr">→</span>
+        <span class="step">Save &amp; verify</span><span class="arr">→</span>
+        <span class="step">WhatsApp invoice</span><span class="arr">→</span>
+        <span class="step">Send</span>
+      </div>
+      <p class="desc" style="margin-top:12px">It is best understood as a <b>brand-controlled guided pitch</b>, not a free-browse catalog. The brand dictates which products are shown, in what order, and forces ad/TVC views between them. The rep shows the tablet <b>across the counter</b> to the shopkeeper. Price is negotiable only down to an admin-set floor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 2 SCOPE & DELIVERY -->
+<section id="delivery">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">02</span><h2>Scope &amp; delivery at a glance</h2></div>
+    <p class="lede">This section ties the PRD to the committed proposal. The MVP is deliberately disciplined; everything the client will eventually want is mapped and fenced as Phase 2, priced separately.</p>
+    <div class="cols two">
+      <div class="card">
+        <h3>What the MVP is <span class="pill mvp">in scope</span></h3>
+        <ul class="reqs">
+          <li><span class="rid">S1</span><span><b>Admin console (web):</b> products, SKU availability, branded card designer, price tiers + floors, catalog/task builder, ad gates, orders view, outlets.</span></li>
+          <li><span class="rid">S2</span><span><b>Rep app (tablet PWA):</b> login, Today's Beat, guided locked pitch, ad gates, negotiate-to-floor, order lifecycle, Tally-style invoice on WhatsApp, offline-tolerant.</span></li>
+          <li><span class="rid">S3</span><span><b>UI language:</b> English. <b>Invoice output:</b> Metical (MTn) + Portuguese amount-in-words + Mozambican layout (matches their Tally).</span></li>
+          <li><span class="rid">S4</span><span><b>Scope:</b> single region. One codebase (Next.js + Supabase), tablet-first Android PWA.</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Fenced to Phase 2 <span class="pill p2">quoted separately</span></h3>
+        <ul class="reqs">
+          <li><span class="rid">S5</span><span><b>Party credit ledger &amp; outstanding</b> (credit control), <b>live stock / ERP sync</b>, <b>trade schemes</b> (buy-X-get-Y, slabs).</span></li>
+          <li><span class="rid">S6</span><span><b>Full Portuguese UI</b> + <b>multi-region / multi-currency</b> structure (the invoice output is already localised in MVP; the app UI is not).</span></li>
+          <li><span class="rid">S7</span><span><b>WhatsApp Business API</b>, <b>payment gateway / online collection</b>, <b>analytics</b>, <b>GPS / route</b>, <b>in-field store onboarding</b>, <b>legal tax-invoice compliance</b>.</span></li>
+        </ul>
+      </div>
+    </div>
+    <h3 style="font-size:15px;margin:18px 0 10px">Delivery plan — first shippable release in 30 to 45 days</h3>
+    <div class="phase-grid">
+      <div class="phase"><div class="pn">01</div><div class="pk">Week 1 · Design</div><h4>UI / UX</h4><p>Tablet-first system, admin console and card designer, designed and signed off.</p></div>
+      <div class="phase"><div class="pn">02</div><div class="pk">Weeks 2 to 4 · Dev</div><h4>The full build</h4><p>Admin, pricing, rep app, guided pitch, ad gates, orders, invoice and offline.</p></div>
+      <div class="phase"><div class="pn">03</div><div class="pk">In parallel · QA</div><h4>Test &amp; validate</h4><p>Full-flow validation: pricing, floors, ad gates, offline, invoice.</p></div>
+      <div class="phase"><div class="pn">04</div><div class="pk">By day 45 · Ship</div><h4>First release</h4><p>Deployment-ready, QA-tested, pilot-ready, with 7 days of launch support.</p></div>
+    </div>
+    <div class="callout green" style="margin-top:14px"><b>Commercials live in the proposal</b> (frozen, v2-text): fixed <b>one-time build</b>, milestone-billed 50 / 30 / 20, with an optional monthly care retainer after launch. This PRD defines <b>what</b> is built; the proposal defines the terms.</div>
+  </div>
+</section>
+
+<!-- 3 GOALS -->
+<section id="principles">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">03</span><h2>Goals &amp; principles</h2></div>
+    <div class="cols two">
+      <div class="card">
+        <h3>Product goals</h3>
+        <ul class="reqs">
+          <li><span class="rid">G1</span><span><b>Brand controls the pitch</b> — sequence of catalogs &amp; products is admin-defined and enforced.</span></li>
+          <li><span class="rid">G2</span><span><b>Fit the existing workflow</b> — save, phone-check stock, in-shop approval, WhatsApp sign-off. Don't force new behaviour.</span></li>
+          <li><span class="rid">G3</span><span><b>Fast order capture</b> at the counter with negotiated, floor-protected pricing.</span></li>
+          <li><span class="rid">G4</span><span><b>Everything dynamic from admin</b> — catalog, pricing, content, ads update without a redeploy.</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Build principles (for the dev)</h3>
+        <ul class="reqs">
+          <li><span class="rid">P1</span><span><b>One codebase, one API, one DB.</b> Admin + rep app share a backend.</span></li>
+          <li><span class="rid">P2</span><span><b>Data-driven, not hard-coded.</b> Product cards, tiers, ad slots are configuration, rendered at runtime.</span></li>
+          <li><span class="rid">P3</span><span><b>English UI for the MVP, but i18n-ready.</b> Keep all UI strings externalised so a Portuguese UI can be added in Phase 2 without refactor. The <b>invoice output</b> is localised now (MTn + Portuguese amount-in-words).</span></li>
+          <li><span class="rid">P4</span><span><b>Resilient in the field</b> — tolerate patchy signal; never lose a drafted order.</span></li>
+          <li><span class="rid">P5</span><span><b>Single-region now, region-aware in the schema.</b> Model region/currency as data so multi-region is a Phase-2 config expansion, not a rebuild.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ARCH -->
+<section id="arch">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">04</span><h2>Platform &amp; recommended stack</h2></div>
+    <div class="card">
+      <dl class="kv">
+        <dt>Rep client</dt><dd><b>Installable PWA, tablet-first (Android)</b>, responsive down to phone. No native app. Tablet is the primary screen because it is shown to the shopkeeper.</dd>
+        <dt>Admin client</dt><dd><b>Web dashboard</b> (same codebase), SSR — data-heavy management UI.</dd>
+        <dt>Architecture</dt><dd><b>API-driven + database-backed.</b> Admin writes config; rep PWA reads via API and caches locally. Admin changes reflect in the app in near-real-time.</dd>
+        <dt>Framework</dt><dd><b>Next.js + TypeScript</b> — serves both the admin (SSR) and the installable rep PWA; shared components + API routes.</dd>
+        <dt>Backend / DB</dt><dd><b>Supabase</b> — Postgres, Auth (roles/permissions), Storage (product images, videos), Row-Level Security (region/role scoping), Realtime (config push). Relational model fits regional pricing.</dd>
+        <dt>Invoice / PDF</dt><dd>Server-side PDF (React-PDF or Puppeteer). Portuguese number-to-words + weight roll-up. Localised output even though the UI is English.</dd>
+        <dt>WhatsApp</dt><dd><b>MVP:</b> generate PDF → share via <code>wa.me</code> deep link / native share (no cost). <b>Phase 2:</b> WhatsApp Business Cloud API for automated sends.</dd>
+        <dt>Video / ads</dt><dd>Storage on a low-cost CDN (Supabase Storage / Cloudflare R2 / Bunny). HTML5 video with completion gating.</dd>
+        <dt>Hosting</dt><dd>Vercel (Next.js) + Supabase. Near-zero infra cost at this scale.</dd>
+      </dl>
+    </div>
+    <div class="callout blue"><b>Why PWA, not native:</b> the content is presentational (catalogs, branded cards, video), devices are company-controlled, and there is no app-store distribution need. A native build roughly doubles cost and maintenance for no user-facing gain here.</div>
+  </div>
+</section>
+
+<!-- 5 ACTORS -->
+<section id="actors">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">05</span><h2>Actors &amp; roles</h2></div>
+    <table class="tbl">
+      <thead><tr><th>Actor</th><th>Surface</th><th>Core jobs</th><th>Access scope</th></tr></thead>
+      <tbody>
+        <tr><td class="ent">Super Admin</td><td>Web</td><td>Manage catalog, pricing, content, ads; onboard reps; assign tasks; view orders</td><td>All regions</td></tr>
+        <tr><td class="ent">Regional Admin <span class="pill assume">confirm</span></td><td>Web</td><td>Same as above, scoped to a region (pricing/SKU availability). <i>Central-only vs regional editing is an open question (Q6).</i></td><td>Own region</td></tr>
+        <tr><td class="ent">Sales Rep</td><td>Tablet PWA</td><td>Run today's beat, pitch catalogs, capture orders, send invoice</td><td>Own tasks / assigned region</td></tr>
+        <tr><td class="ent">Shopkeeper</td><td>(passive)</td><td>Views the pitch across the counter; receives the WhatsApp invoice</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 6 REP APP -->
+<section id="rep">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">06</span><h2>Rep app — feature specs</h2></div>
+
+    <div class="card">
+      <h3>6.1 Authentication <span class="pill mvp">MVP</span></h3>
+      <p class="desc">Low-friction login for field staff onboarded by admin.</p>
+      <ul class="reqs">
+        <li><span class="rid">R-A1</span><span>Admin onboards a rep and issues a <b>login code / key</b>; rep signs in with it (no self-registration).</span></li>
+        <li><span class="rid">R-A2</span><span>Session persists on the device; rep stays logged in across the working day.</span></li>
+        <li><span class="rid">R-A3</span><span>Rep only sees data scoped to their assigned tasks / region.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>6.2 Today's Beat (home) <span class="pill mvp">MVP</span></h3>
+      <p class="desc">Landing screen = the rep's task list for the day (ref wireframe v2).</p>
+      <ul class="reqs">
+        <li><span class="rid">R-B1</span><span>List of <b>tasks</b> assigned for today; each task maps to a <b>catalog</b> to present.</span></li>
+        <li><span class="rid">R-B2</span><span>Each task shows its hero/push target where set (e.g. "push: 50 boxes").</span></li>
+        <li><span class="rid">R-B3</span><span>Tapping a task opens the catalog and starts the guided pitch.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>6.3 Guided catalog pitch <span class="pill mvp">MVP</span></h3>
+      <p class="desc">A catalog is an <b>ordered</b> set of products (~20–25) shown one at a time. The order is brand-controlled and enforced.</p>
+      <ul class="reqs">
+        <li><span class="rid">R-C1</span><span>Products are presented in the <b>exact admin-defined order</b>; the rep advances one product at a time.</span></li>
+        <li><span class="rid">R-C2</span><span>A catalog may designate a <b>hero product</b> with a push target quantity.</span></li>
+        <li><span class="rid">R-C3</span><span>A rep can run <b>multiple catalogs</b> for one shopkeeper in a single visit; all lines roll into one order.</span></li>
+        <li><span class="rid">R-C4</span><span>Ad/TVC gates (§6.5) can sit <b>between products</b> and <b>at catalog end</b>, defined by admin.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>6.4 Product pitch page <span class="pill mvp">MVP</span></h3>
+      <p class="desc">Single branded product (ref wireframe v4). The visual card is composed from admin config (§7.3).</p>
+      <ul class="reqs">
+        <li><span class="rid">R-P1</span><span>Shows the <b>branded product image</b> with overlaid logo, brand colour and <b>price-tier badges</b> (e.g. 1 / 100 / 250 boxes @ rates) — all rendered from data.</span></li>
+        <li><span class="rid">R-P2</span><span><b>Right side:</b> unit rate + live line amount.</span></li>
+        <li><span class="rid">R-P3</span><span><b>Quantity input</b> (boxes only). On change, amount recalculates against the applicable price tier (§9).</span></li>
+        <li><span class="rid">R-P4</span><span><b>Price negotiation:</b> rep may lower the unit price; if below the admin-set <b>floor</b>, the app <b>blocks with an error</b> and prevents adding the line.</span></li>
+        <li><span class="rid">R-P5</span><span>Tiers &amp; floor resolve by the shop's <b>region</b> (§9).</span></li>
+        <li><span class="rid">R-P6</span><span>"Add / update line" adds the product to the running order and advances the pitch.</span></li>
+      </ul>
+      <div class="callout amber"><b>UOM is simplified:</b> ordering is <b>boxes (case-pack) + quantity only</b> — no cartons/pallets hierarchy. The 1/100/250 figures are <b>quantity breakpoints for pricing</b>, not separate units. The invoice surfaces <b>case-pack (box) qty and per-unit rate</b> for readability. Trade schemes (buy-X-get-Y, slabs) are <b>Phase 2</b> (§11).</div>
+    </div>
+
+    <div class="card">
+      <h3>6.5 Mandatory ad / TVC gates <span class="pill mvp">MVP</span></h3>
+      <p class="desc">A control mechanism that forces the pitch sequence and guarantees ad exposure.</p>
+      <ul class="reqs">
+        <li><span class="rid">R-V1</span><span>At an admin-defined gate, a video plays; the rep <b>cannot proceed</b> until it finishes.</span></li>
+        <li><span class="rid">R-V2</span><span>Gate playback is <b>non-skippable by default</b> (admin may mark a gate skippable).</span></li>
+        <li><span class="rid">R-V3</span><span>Only after the full duration completes does the next product / catalog unlock.</span></li>
+        <li><span class="rid">R-V4</span><span>Gate videos are pre-cached with the beat so they play with poor signal.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>6.6 Order lifecycle: save → verify → send <span class="pill mvp">MVP</span></h3>
+      <p class="desc">Mirrors the client's existing manual flow — do not shortcut it.</p>
+      <div class="flow">
+        <span class="step">Draft</span><span class="arr">→</span>
+        <span class="step">Saved</span><span class="arr">→</span>
+        <span class="step">Stock-checked</span><span class="arr">→</span>
+        <span class="step">Sent for approval</span><span class="arr">→</span>
+        <span class="step">Confirmed</span>
+      </div>
+      <ul class="reqs" style="margin-top:10px">
+        <li><span class="rid">R-O1</span><span>Rep can <b>save</b> an order as a draft to review with the shop owner (and a second approver).</span></li>
+        <li><span class="rid">R-O2</span><span>Per-line <b>stock check</b> — rep marks each line verified (they phone to confirm availability). Order status reflects completeness. <i>This is a manual check; live stock is Phase 2 (§11).</i></span></li>
+        <li><span class="rid">R-O3</span><span>When all lines are verified, rep generates the <b>invoice (§6.7)</b> and shares it on <b>WhatsApp</b> for approval + cost sign-off.</span></li>
+        <li><span class="rid">R-O4</span><span>Final <b>send / confirm</b> records the order. Order carries status history.</span></li>
+        <li><span class="rid">R-O5</span><span>Drafts survive connectivity loss and app restart (§10).</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>6.7 Invoice (Tally-style proforma) <span class="pill mvp">MVP</span></h3>
+      <p class="desc">Must resemble the client's Tally "FATURA PROFORMA". Output is a localised PDF for WhatsApp — even though the app UI is English, this artifact is Mozambican.</p>
+      <ul class="reqs">
+        <li><span class="rid">R-I1</span><span><b>Total Weight in Kgs shown at the top</b> — sum of (product unit weight × qty) across lines.</span></li>
+        <li><span class="rid">R-I2</span><span>Columns: SI No · Description · Quantity · Rate · per · Amount; grand total.</span></li>
+        <li><span class="rid">R-I3</span><span>Currency <b>Metical (MTn)</b>; <b>amount in words in Portuguese</b>; proforma header + authorised-signatory block.</span></li>
+        <li><span class="rid">R-I4</span><span>Party / shop details populate from the selected outlet.</span></li>
+        <li><span class="rid">R-I5</span><span>Generated as a downloadable/shareable PDF; not (in MVP) a legally-filed tax document — see §12.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7 ADMIN -->
+<section id="admin">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">07</span><h2>Admin portal — feature specs</h2></div>
+
+    <div class="card">
+      <h3>7.1 Auth, users &amp; roles <span class="pill mvp">MVP</span></h3>
+      <ul class="reqs">
+        <li><span class="rid">A-U1</span><span>Admin login with <b>role-based permissions</b> (super admin; regional admin optional — Q6).</span></li>
+        <li><span class="rid">A-U2</span><span>Onboard reps, <b>issue login codes</b>, assign region / tasks, deactivate.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>7.2 Product management <span class="pill mvp">MVP</span></h3>
+      <ul class="reqs">
+        <li><span class="rid">A-P1</span><span>CRUD products: name, category, base image, <b>unit weight (kg)</b> — weight feeds the invoice.</span></li>
+        <li><span class="rid">A-P2</span><span>Enable/disable a product <b>per region</b> (a SKU may sell in one region, not another).</span></li>
+        <li><span class="rid">A-P3</span><span><b>SKU availability on/off (admin-controlled)</b> — the MVP stand-in for stock visibility. A rep cannot book a SKU the admin has switched off. <i>Live stock / ERP sync is Phase 2 (§11).</i></span></li>
+        <li><span class="rid">A-P4</span><span><b>Bulk import</b> of the ~1,000-SKU catalog via CSV, with a validation preview and error reporting. <span class="pill assume">assumes clean CSV — Q2</span></span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>7.3 Product-card designer <span class="pill mvp">MVP</span></h3>
+      <p class="desc">The admin composes the branded pitch card the rep shows. Build as a <b>data-driven template layer</b>, not an in-browser image editor.</p>
+      <ul class="reqs">
+        <li><span class="rid">A-C1</span><span>Upload product image; set <b>brand colour</b> and place a <b>logo</b>.</span></li>
+        <li><span class="rid">A-C2</span><span>Define the <b>price-tier badges</b> (label + rate per tier, e.g. 1/100/250 boxes) as structured data.</span></li>
+        <li><span class="rid">A-C3</span><span>Overlays render over the image at runtime (HTML/CSS/SVG layer) — no flattened/exported image required.</span></li>
+        <li><span class="rid">A-C4</span><span>Live preview of the composed card before publish.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>7.4 Catalog &amp; task builder <span class="pill mvp">MVP</span></h3>
+      <ul class="reqs">
+        <li><span class="rid">A-T1</span><span>Create catalogs; add products; <b>drag-reorder</b> products within a catalog (order is enforced in the app).</span></li>
+        <li><span class="rid">A-T2</span><span>Mark a catalog's <b>hero product</b> + push target quantity.</span></li>
+        <li><span class="rid">A-T3</span><span>Assemble catalogs into <b>tasks</b> and assign to reps; <b>reorder catalogs</b> within a task.</span></li>
+        <li><span class="rid">A-T4</span><span>Place <b>ad gates</b> (§7.5) between products or at catalog end.</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>7.5 Pricing &amp; ad configuration <span class="pill mvp">MVP</span></h3>
+      <ul class="reqs">
+        <li><span class="rid">A-R1</span><span>Per product per region: define <b>quantity price tiers</b> and a <b>floor price</b> (§9).</span></li>
+        <li><span class="rid">A-R2</span><span>Upload <b>ad / TVC videos</b>; set skippable flag; assign to gates.</span></li>
+      </ul>
+      <div class="callout blue"><b>Not in MVP:</b> trade schemes / free-goods (buy-X-get-Y, combos), and party-level credit limits. Pricing control in MVP = tiers + floor only. Schemes and credit are Phase 2 (§11).</div>
+    </div>
+
+    <div class="card">
+      <h3>7.6 Orders &amp; outlets <span class="pill mvp">MVP</span></h3>
+      <ul class="reqs">
+        <li><span class="rid">A-O1</span><span>View orders with status, lines, negotiated prices, weight, rep &amp; outlet.</span></li>
+        <li><span class="rid">A-O2</span><span>Manage the <b>outlet / shop list</b> reps select from (pre-registered shops). New-store onboarding = Phase 2.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 8 DATA MODEL -->
+<section id="data">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">08</span><h2>Data model (first cut)</h2></div>
+    <p class="lede">Indicative entities &amp; key fields to align on before build. Region-scoped pricing is the one relationship to get right early; model region/currency as data so multi-region is a Phase-2 config expansion, not a rebuild.</p>
+    <div class="datablock">
+<span class="k">Product</span>( id, name, category, base_image, <span class="t">unit_weight_kg</span>, active )<br>
+<span class="k">ProductCard</span>( product_id, logo, brand_color, overlay_config<span class="c"> // tier badge layout</span> )<br>
+<span class="k">Region</span>( id, name, country<span class="c"> // Mozambique (single for MVP)</span>, currency<span class="c"> // MTn</span> )<br>
+<span class="k">ProductPricing</span>( product_id, region_id, <span class="t">tiers[]</span><span class="c"> // {min_qty, rate}</span>, <span class="t">floor_price</span>, <span class="t">available</span><span class="c"> // SKU on/off</span> )<br>
+<span class="k">Catalog</span>( id, name, region_id, product_order[]<span class="c"> // ordered</span>, hero_product_id, push_target_qty )<br>
+<span class="k">AdGate</span>( id, catalog_id, position<span class="c"> // between-product idx | end</span>, video_id, skippable )<br>
+<span class="k">Video</span>( id, url, duration )<br>
+<span class="k">Task</span>( id, rep_id, date, catalog_order[]<span class="c"> // ordered</span> )<br>
+<span class="k">Rep</span>( id, name, login_code, region_id, active )<br>
+<span class="k">Outlet</span>( id, name, address, contact, region_id )<br>
+<span class="k">Order</span>( id, outlet_id, rep_id, <span class="t">status</span><span class="c"> // draft→saved→checked→sent→confirmed</span>, total_weight_kg, total_amount, created_at )<br>
+<span class="k">OrderLine</span>( order_id, product_id, qty, applied_rate, line_amount, line_weight_kg, <span class="t">stock_verified</span> )<br>
+<span class="k">Admin</span>( id, name, role<span class="c"> // super | regional</span>, region_id? )
+    </div>
+    <div class="callout blue" style="margin-top:14px"><b>Phase-2 entities</b> (design the schema to accommodate, do not build): <code>PartyLedger</code> / <code>Outstanding</code>, <code>StockLevel</code> (ERP sync), <code>Scheme</code> (buy-X-get-Y / slab), <code>i18nString</code> (Portuguese UI), <code>Payment</code>.</div>
+  </div>
+</section>
+
+<!-- 9 PRICING -->
+<section id="pricing">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">09</span><h2>Pricing engine — rules</h2></div>
+    <div class="card">
+      <ul class="reqs">
+        <li><span class="rid">PR1</span><span><b>Resolve context:</b> pricing = f(product, region). Every rate/floor lookup is region-scoped (single region for MVP, but resolved through the region key).</span></li>
+        <li><span class="rid">PR2</span><span><b>Tier rate:</b> tiers are quantity breakpoints (e.g. ≥1 → 880, ≥100 → 870, ≥250 → 860 MTn). The applicable rate is the highest breakpoint the entered quantity satisfies.</span></li>
+        <li><span class="rid">PR3</span><span><b>Negotiation:</b> rep may reduce the unit rate below the tier rate. Allowed only while <code>rate ≥ floor_price</code>. Below floor → hard error, line cannot be added.</span></li>
+        <li><span class="rid">PR4</span><span><b>Line amount</b> = applied_rate × qty. <b>Line weight</b> = unit_weight_kg × qty.</span></li>
+        <li><span class="rid">PR5</span><span><b>Order totals</b> = Σ line amounts, Σ line weights (weight drives the invoice header).</span></li>
+        <li><span class="rid">PR6</span><span>Tiers &amp; floor are fully admin-editable per product per region; changes reflect in the app on next sync.</span></li>
+        <li><span class="rid">PR7</span><span><b>Out of scope:</b> trade schemes / free-goods and slab-vs-whole-order discounting variants beyond simple tiers are Phase 2 (§11).</span></li>
+      </ul>
+      <div class="callout"><b>Confirm on discovery (Q3):</b> whether tier pricing is <b>whole-order</b> (all units at the band rate — assumed here) or <b>slab</b> (each band priced separately). Affects PR2 only.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 NFR -->
+<section id="nfr">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">10</span><h2>Non-functional requirements</h2></div>
+    <div class="cols two">
+      <div class="card">
+        <h3>Field resilience &amp; performance</h3>
+        <ul class="reqs">
+          <li><span class="rid">N1</span><span><b>Offline-tolerant:</b> on beat start, cache the day's catalogs, product cards, images and gate videos. Draft orders queue locally and sync when back online. <span class="pill assume">depth TBD — Q1</span></span></li>
+          <li><span class="rid">N2</span><span>Pitch screens must feel instant on a mid-range Android tablet; pre-load the next product.</span></li>
+          <li><span class="rid">N3</span><span>Installable PWA (add-to-home-screen), full-screen, portrait + landscape.</span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Localisation, security, ops</h3>
+        <ul class="reqs">
+          <li><span class="rid">N4</span><span><b>Localisation (MVP):</b> app UI in <b>English</b>; <b>invoice output</b> in Metical formatting + Portuguese amount-in-words. All UI strings externalised so a <b>Portuguese UI</b> is a Phase-2 add, not a refactor.</span></li>
+          <li><span class="rid">N5</span><span><b>RBAC + region scoping</b> enforced at the API (row-level), not just the UI.</span></li>
+          <li><span class="rid">N6</span><span>Config changes (catalog, pricing, ads) are versioned/auditable; no redeploy needed.</span></li>
+          <li><span class="rid">N7</span><span>Media (images/video) served from CDN; sensible upload size limits.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 OUT OF SCOPE -->
+<section id="scope">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">11</span><h2>Out of scope for MVP (Phase 2+)</h2></div>
+    <p class="lede">Named on purpose. A disciplined MVP with the full beat-system roadmap already mapped — this matches the proposal's out-of-scope band exactly, so the client sees we know what a complete system needs and chose a lean first release.</p>
+    <div class="card">
+      <ul class="reqs">
+        <li><span class="rid">X1</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>Party credit ledger &amp; outstanding</b> — credit limit / balance visible at the counter before booking (the #1 margin control in FMCG trade).</span></li>
+        <li><span class="rid">X2</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>Live stock / warehouse / ERP integration</b> — order capture is decoupled from stock in MVP (SKU on/off is the stand-in).</span></li>
+        <li><span class="rid">X3</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>Trade schemes / free-goods</b> — buy-X-get-Y, slab discounts, combos.</span></li>
+        <li><span class="rid">X4</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>Full Portuguese UI</b> + <b>multi-region / multi-currency</b> structure (invoice output is already localised in MVP).</span></li>
+        <li><span class="rid">X5</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>WhatsApp Business API</b> automated sends (MVP uses share deep-link).</span></li>
+        <li><span class="rid">X6</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>Payment gateway / online collection</b> — cash/credit terms handled off-app in MVP.</span></li>
+        <li><span class="rid">X7</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>Analytics</b> — coverage %, rep productivity, top SKUs.</span></li>
+        <li><span class="rid">X8</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>GPS tracking + beat-route planning</b>, and <b>in-field new-store onboarding</b> (GPS + photo + contact).</span></li>
+        <li><span class="rid">X9</span><span class="pill p2" style="align-self:center">Phase 2</span><span><b>Legal tax-invoice compliance</b> + <b>marketing website</b> (budget-dependent add-ons).</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 12 OPEN -->
+<section id="open">
+  <div class="wrap">
+    <div class="sec-head"><span class="n">12</span><h2>Open questions / assumptions to confirm</h2></div>
+    <p class="lede">Some earlier questions are now <b>decided</b> by the frozen proposal (localisation, region scope); the rest must be locked on the direct client call before the build starts.</p>
+    <div class="card">
+      <ul class="reqs">
+        <li><span class="rid">Q1</span><span><b>Offline depth</b> — how patchy is field signal? Drives sync complexity (N1).</span></li>
+        <li><span class="rid">Q2</span><span><b>SKU data readiness</b> — ~1,000 SKUs as clean CSV, or scattered images/PDFs needing a data pipeline (add-on)?</span></li>
+        <li><span class="rid">Q3</span><span><b>Pricing model</b> — whole-order tier vs slab (PR2)?</span></li>
+        <li><span class="rid">Q4</span><span><b>Invoice legality</b> — is the invoice a legal Mozambican tax document, or an order slip? (Legal compliance is Phase 2 either way.)</span></li>
+        <li><span class="rid">Q5</span><span><b>Data-entry model</b> — central admin only, or regional admins editing pricing/SKUs? (Affects RBAC scope, A-U1.)</span></li>
+        <li><span class="rid">Q6</span><span><b>IP ownership</b> — bespoke (client owns) vs licensed product (we own). Kept soft in the proposal; settle in the contract before build.</span></li>
+      </ul>
+    </div>
+    <div class="callout green"><b>Now decided (was open in v1):</b> <b>Localisation</b> — English UI MVP, invoice output localised, full Portuguese UI is Phase 2. <b>Region scope</b> — single region for MVP, multi-region is Phase 2. <b>Payment collection</b> — out of app for MVP (Phase 2 gateway).</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <b>Beat — Product Requirements v2 · 91Pixels.</b> Aligned to the frozen proposal (v2-text). Defines what the MVP builds; the proposal defines the commercial terms. Scope firms on the direct client call. © 2026 91Pixels. All rights reserved — confidential, shared for review only, not for redistribution.
+  </div>
+</footer>
+
+</body>
+</html>
